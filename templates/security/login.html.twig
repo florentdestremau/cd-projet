@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Connexion — Maison</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,500&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    {{ importmap('app') }}
+</head>
+<body>
+    <main style="min-height: 100vh; display: grid; place-items: center; padding: var(--space-5);">
+        <div class="card" style="max-width: 420px; width: 100%; padding: var(--space-7);">
+            <h1 style="font-size: var(--text-3xl); margin-bottom: var(--space-2);">Maison</h1>
+            <p class="text-muted text-sm" style="margin-bottom: var(--space-6); letter-spacing: 0.16em; text-transform: uppercase;">Atelier — Connexion</p>
+
+            {% if error %}
+                <p class="text-sm" style="color: var(--color-danger); margin-bottom: var(--space-4);">
+                    {{ error.messageKey|trans(error.messageData, 'security') }}
+                </p>
+            {% endif %}
+
+            <form method="post" class="stack">
+                <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
+
+                <div>
+                    <label for="email" class="text-xs text-muted" style="display: block; letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: var(--space-2);">Adresse e-mail</label>
+                    <input type="email" id="email" name="_username" value="{{ last_username }}" required autofocus
+                           style="width: 100%; padding: var(--space-3) 0; border: none; border-bottom: 1px solid var(--color-line); background: transparent; font-size: var(--text-base);">
+                </div>
+
+                <div>
+                    <label for="password" class="text-xs text-muted" style="display: block; letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: var(--space-2);">Mot de passe</label>
+                    <input type="password" id="password" name="_password" required
+                           style="width: 100%; padding: var(--space-3) 0; border: none; border-bottom: 1px solid var(--color-line); background: transparent; font-size: var(--text-base);">
+                </div>
+
+                <label class="text-sm text-soft" style="display: flex; align-items: center; gap: var(--space-2); margin-top: var(--space-2);">
+                    <input type="checkbox" name="_remember_me" value="on">
+                    Rester connecté
+                </label>
+
+                <button type="submit" class="btn btn--primary" style="margin-top: var(--space-4); width: 100%;">
+                    Se connecter
+                </button>
+            </form>
+        </div>
+    </main>
+</body>
+</html>

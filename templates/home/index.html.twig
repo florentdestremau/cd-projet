@@ -1,69 +1,82 @@
 {% extends 'base.html.twig' %}
-
-{% block title %}Bienvenue{% endblock %}
+{% block title %}Tableau de bord{% endblock %}
 
 {% block body %}
     <div class="page__header">
         <div>
-            <h1 class="page__title">Hey, Marie</h1>
+            <h1 class="page__title">Hey, {{ app.user.firstName }}</h1>
             <p class="page__subtitle">Voici ce qui a bougé depuis votre dernière visite.</p>
-        </div>
-        <div class="page__actions">
-            <button class="btn btn--secondary">{{ ux_icon('lucide:filter') }} Filtrer</button>
-            <button class="btn btn--primary">{{ ux_icon('lucide:plus') }} Nouveau projet</button>
         </div>
     </div>
 
     <div class="stack stack--lg">
         <section class="stack">
             <h2>Mentions et réponses</h2>
-            <div class="grid-2">
-                <article class="card">
-                    <h3 class="card__title">BAG-2026-042 · Bague solitaire</h3>
-                    <p class="card__subtitle">Paul D. · il y a 2 h</p>
-                    <p>« <strong>@Marie</strong> le ton du rose vous convient, je peux lancer la fonte ? »</p>
-                </article>
-                <article class="card">
-                    <h3 class="card__title">BAG-2026-031 · Alliance pavée</h3>
-                    <p class="card__subtitle">Camille R. · hier</p>
-                    <p>« <strong>@Marie</strong> validation client reçue par mail, je classe dans le projet. »</p>
-                </article>
-            </div>
+            {% if mentions|length > 0 %}
+                <div class="grid-2">
+                    {% for comment in mentions %}
+                        <article class="card">
+                            <h3 class="card__title">
+                                <a href="{{ path('app_projects_show', {reference: comment.project.reference}) }}">
+                                    {{ comment.project.reference }}
+                                </a>
+                                <span class="text-muted text-sm" style="font-family: var(--font-sans); font-weight: 400;">· {{ comment.project.title }}</span>
+                            </h3>
+                            <p class="card__subtitle">{{ comment.author.fullName }} · {{ comment.createdAt|format_datetime('short', 'short', locale='fr') }}</p>
+                            <p>« {{ comment.body|u.truncate(180, '…') }} »</p>
+                        </article>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <p class="text-muted">Aucune mention récente. ✦</p>
+            {% endif %}
         </section>
 
         <section class="stack">
-            <h2>Vos projets en cours</h2>
-            <div class="grid-3">
-                <article class="card">
-                    <span class="tag tag--gold">CAO 3D</span>
-                    <h3 class="card__title" style="margin-top: var(--space-3)">BAG-2026-042</h3>
-                    <p class="card__subtitle">Bague solitaire diamant 1 ct — Mme Dubois</p>
-                    <p class="text-sm text-soft">Livraison prévue le 15 juillet 2026.</p>
-                </article>
-                <article class="card">
-                    <span class="tag tag--success">Sertissage</span>
-                    <h3 class="card__title" style="margin-top: var(--space-3)">BAG-2026-031</h3>
-                    <p class="card__subtitle">Alliance pavée — M. Lefèvre</p>
-                    <p class="text-sm text-soft">Livraison prévue le 5 juillet 2026.</p>
-                </article>
-                <article class="card">
-                    <span class="tag tag--warning">Validation client</span>
-                    <h3 class="card__title" style="margin-top: var(--space-3)">BAG-2026-058</h3>
-                    <p class="card__subtitle">Chevalière monogramme — Maison Cartier</p>
-                    <p class="text-sm text-soft">Relance à faire — devis envoyé il y a 4 jours.</p>
-                </article>
-            </div>
+            <h2>Mes tâches</h2>
+            {% if tasks|length > 0 %}
+                <div class="card">
+                    <ul style="list-style: none; padding: 0; margin: 0;">
+                        {% for task in tasks %}
+                            <li style="display: flex; align-items: center; gap: var(--space-3); padding: var(--space-3) 0; border-bottom: 1px solid var(--color-line);">
+                                {{ ux_icon('lucide:square') }}
+                                <span style="flex: 1;">{{ task.title }}</span>
+                                <a href="{{ path('app_projects_show', {reference: task.project.reference}) }}" class="text-xs text-muted">{{ task.project.reference }}</a>
+                                {% if task.dueDate %}<span class="tag">{{ task.dueDate|format_date('short', locale='fr') }}</span>{% endif %}
+                            </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            {% else %}
+                <p class="text-muted">Aucune tâche en cours.</p>
+            {% endif %}
         </section>
 
-        <section class="card">
-            <h3 class="card__title">Phase 0 — Bootstrap terminé</h3>
-            <p>
-                Cette page sert de témoin du style définitif (palette
-                <code>#FAF8F3</code> / <code>#B8935A</code>, Cormorant Garamond + Inter,
-                composants <span class="tag">card</span>
-                <span class="tag tag--gold">tag-gold</span>
-                <span class="tag tag--success">tag-success</span>).
-            </p>
+        <section class="stack">
+            <h2>Activité récente</h2>
+            <div class="card">
+                <ul style="list-style: none; padding: 0; margin: 0;">
+                    {% for log in recent_activity %}
+                        <li style="display: flex; align-items: baseline; gap: var(--space-3); padding: var(--space-2) 0; border-bottom: 1px solid var(--color-line);">
+                            <span class="text-xs text-muted" style="min-width: 80px; font-variant-numeric: tabular-nums;">
+                                {{ log.createdAt|format_datetime('short', 'short', locale='fr') }}
+                            </span>
+                            <span style="flex: 1;">
+                                <strong>{{ log.actor.fullName }}</strong>
+                                {% if log.eventType == 'comment.created' %}
+                                    a commenté
+                                    {% if log.project %}<a href="{{ path('app_projects_show', {reference: log.project.reference}) }}">{{ log.project.reference }}</a>{% endif %}
+                                    {% if log.payload.comment_excerpt %}
+                                        <span class="text-soft">— « {{ log.payload.comment_excerpt }}… »</span>
+                                    {% endif %}
+                                {% else %}
+                                    {{ log.eventType }}
+                                {% endif %}
+                            </span>
+                        </li>
+                    {% endfor %}
+                </ul>
+            </div>
         </section>
     </div>
 {% endblock %}

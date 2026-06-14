@@ -1,0 +1,78 @@
+{% extends 'base.html.twig' %}
+{% block title %}Projets{% endblock %}
+
+{% block body %}
+    <div class="page__header">
+        <div>
+            <h1 class="page__title">Projets</h1>
+            <p class="page__subtitle">{{ projects|length }} projet{{ projects|length > 1 ? 's' }} affiché{{ projects|length > 1 ? 's' }}.</p>
+        </div>
+        <div class="page__actions">
+            <a href="#" class="btn btn--primary">{{ ux_icon('lucide:plus') }} Nouveau projet</a>
+        </div>
+    </div>
+
+    <form method="get" class="card" style="margin-bottom: var(--space-6); display: grid; grid-template-columns: 2fr 1fr 1fr auto; gap: var(--space-3); align-items: end;">
+        <div>
+            <label class="text-xs text-muted" style="display: block; letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: var(--space-1);">Recherche</label>
+            <input type="search" name="q" value="{{ search }}" placeholder="Titre, référence, client…"
+                   style="width: 100%; padding: var(--space-2) 0; border: none; border-bottom: 1px solid var(--color-line); background: transparent;">
+        </div>
+        <div>
+            <label class="text-xs text-muted" style="display: block; letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: var(--space-1);">Statut</label>
+            <select name="status" style="width: 100%; padding: var(--space-2) 0; border: none; border-bottom: 1px solid var(--color-line); background: transparent;">
+                <option value="">Tous (sauf annulés)</option>
+                {% for s in statuses %}
+                    <option value="{{ s.value }}" {{ s.value == status_filter ? 'selected' }}>{{ s.label }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div>
+            <label class="text-xs text-muted" style="display: block; letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: var(--space-1);">Étape</label>
+            <select name="stage" style="width: 100%; padding: var(--space-2) 0; border: none; border-bottom: 1px solid var(--color-line); background: transparent;">
+                <option value="">Toutes</option>
+                {% for s in stages %}
+                    <option value="{{ s.value }}" {{ s.value == stage_filter ? 'selected' }}>{{ s.label }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <button type="submit" class="btn btn--secondary">Filtrer</button>
+    </form>
+
+    <table style="width: 100%; border-collapse: collapse;">
+        <thead>
+            <tr style="border-bottom: 1px solid var(--color-line);">
+                <th style="text-align: left; padding: var(--space-3); font-family: var(--font-serif); font-style: italic; font-weight: 400; color: var(--color-ink-muted);">Référence</th>
+                <th style="text-align: left; padding: var(--space-3); font-family: var(--font-serif); font-style: italic; font-weight: 400; color: var(--color-ink-muted);">Titre</th>
+                <th style="text-align: left; padding: var(--space-3); font-family: var(--font-serif); font-style: italic; font-weight: 400; color: var(--color-ink-muted);">Client</th>
+                <th style="text-align: left; padding: var(--space-3); font-family: var(--font-serif); font-style: italic; font-weight: 400; color: var(--color-ink-muted);">Étape</th>
+                <th style="text-align: left; padding: var(--space-3); font-family: var(--font-serif); font-style: italic; font-weight: 400; color: var(--color-ink-muted);">Échéance</th>
+                <th style="text-align: right; padding: var(--space-3); font-family: var(--font-serif); font-style: italic; font-weight: 400; color: var(--color-ink-muted);">Prix</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for project in projects %}
+                <tr style="border-bottom: 1px solid var(--color-line); background-color: {{ loop.index is odd ? 'transparent' : 'var(--color-paper)' }};">
+                    <td style="padding: var(--space-3);">
+                        <a href="{{ path('app_projects_show', {reference: project.reference}) }}" style="font-family: var(--font-mono); font-size: var(--text-sm);">
+                            {{ project.reference }}
+                        </a>
+                    </td>
+                    <td style="padding: var(--space-3);">{{ project.title }}</td>
+                    <td style="padding: var(--space-3);" class="text-soft">{{ project.client.displayName }}</td>
+                    <td style="padding: var(--space-3);">
+                        <span class="tag tag--gold">{{ project.currentStage.label }}</span>
+                    </td>
+                    <td style="padding: var(--space-3);" class="text-soft text-sm">
+                        {{ project.targetDeliveryDate ? project.targetDeliveryDate|format_date(locale='fr') : '—' }}
+                    </td>
+                    <td style="padding: var(--space-3); text-align: right; font-variant-numeric: tabular-nums;">
+                        {{ (project.sellingPrice / 100)|format_currency('EUR', locale='fr') }}
+                    </td>
+                </tr>
+            {% else %}
+                <tr><td colspan="6" style="padding: var(--space-6); text-align: center;" class="text-muted">Aucun projet ne correspond.</td></tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}

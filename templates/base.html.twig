@@ -33,7 +33,7 @@
                     <a href="{{ path('app_home') }}" class="sidebar__link sidebar__link--active">
                         {{ ux_icon('lucide:layout-dashboard') }} Tableau de bord
                     </a>
-                    <a href="#" class="sidebar__link">
+                    <a href="{{ path('app_projects_index') }}" class="sidebar__link {{ app.request.get('_route') starts with 'app_projects' ? 'sidebar__link--active' }}">
                         {{ ux_icon('lucide:gem') }} Projets
                     </a>
                     <a href="#" class="sidebar__link">
@@ -52,8 +52,13 @@
                 <header class="topbar">
                     <div class="topbar__search text-muted text-sm">Recherche (cmd+K) — bientôt</div>
                     <div class="topbar__user">
-                        <span>Bonjour, Marie</span>
-                        {{ ux_icon('lucide:circle-user-round', {width: 28, height: 28}) }}
+                        {% if app.user %}
+                            <span>Bonjour, {{ app.user.firstName }}</span>
+                            {{ ux_icon('lucide:circle-user-round', {width: 28, height: 28}) }}
+                            <a href="{{ path('app_logout') }}" class="btn btn--ghost" title="Se déconnecter">
+                                {{ ux_icon('lucide:log-out') }}
+                            </a>
+                        {% endif %}
                     </div>
                 </header>
 

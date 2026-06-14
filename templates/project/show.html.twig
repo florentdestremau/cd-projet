@@ -1,0 +1,111 @@
+{% extends 'base.html.twig' %}
+{% block title %}{{ project.reference }} — {{ project.title }}{% endblock %}
+
+{% block body %}
+    <div class="page__header">
+        <div>
+            <p class="text-xs text-muted" style="letter-spacing: 0.16em; text-transform: uppercase; margin-bottom: var(--space-2);">{{ project.reference }}</p>
+            <h1 class="page__title">{{ project.title }}</h1>
+            <p class="page__subtitle">
+                Pour <strong>{{ project.client.displayName }}</strong>
+                {% if project.targetDeliveryDate %} · Livraison prévue le {{ project.targetDeliveryDate|format_date('long', locale='fr') }}{% endif %}
+            </p>
+        </div>
+        <div class="page__actions">
+            <span class="tag tag--gold">{{ project.currentStage.label }}</span>
+        </div>
+    </div>
+
+    <section style="margin-bottom: var(--space-7);">
+        <h6 style="margin-bottom: var(--space-3);">Étapes</h6>
+        <div style="display: flex; gap: var(--space-2); align-items: center; flex-wrap: wrap;">
+            {% for stage in stages %}
+                {% set status = project.stageStatuses|filter(s => s.stage == stage)|first %}
+                {% set done = status and status.completedAt is not null %}
+                {% set current = stage == project.currentStage %}
+                {% set applicable = status is null or status.applicable %}
+                <div style="display: flex; align-items: center; gap: var(--space-2); padding: var(--space-2) var(--space-3); border: 1px solid {{ current ? 'var(--color-gold)' : 'var(--color-line)' }}; border-radius: var(--radius-sm); background-color: {{ done ? 'color-mix(in srgb, var(--color-gold) 10%, var(--color-paper))' : 'transparent' }};">
+                    {% if done %}
+                        {{ ux_icon('lucide:check', {width: 14, height: 14}) }}
+                    {% elseif current %}
+                        {{ ux_icon('lucide:circle-dot', {width: 14, height: 14}) }}
+                    {% else %}
+                        {{ ux_icon('lucide:circle', {width: 14, height: 14}) }}
+                    {% endif %}
+                    <span class="text-sm" style="color: {{ applicable ? 'var(--color-ink)' : 'var(--color-ink-muted)' }};">{{ stage.label }}</span>
+                </div>
+                {% if not loop.last %}<span class="text-muted">·</span>{% endif %}
+            {% endfor %}
+        </div>
+    </section>
+
+    <div class="grid-2" style="grid-template-columns: 1.5fr 1fr; align-items: start;">
+        <section class="stack">
+            <h2>Fil de discussion</h2>
+            {% for comment in comments %}
+                <article class="card" style="padding: var(--space-4) var(--space-5);">
+                    <header style="display: flex; align-items: baseline; gap: var(--space-3); margin-bottom: var(--space-2);">
+                        <strong>{{ comment.author.fullName }}</strong>
+                        <span class="text-xs text-muted">{{ comment.createdAt|format_datetime('short', 'short', locale='fr') }}</span>
+                        {% if comment.mentions|length > 0 %}
+                            <span class="text-xs text-soft">
+                                ↪ mentionne
+                                {% for m in comment.mentions %}<strong>@{{ m.firstName }}</strong>{% if not loop.last %}, {% endif %}{% endfor %}
+                            </span>
+                        {% endif %}
+                    </header>
+                    <p>{{ comment.body }}</p>
+                </article>
+            {% else %}
+                <p class="text-muted">Aucun message pour le moment.</p>
+            {% endfor %}
+
+            <form method="post" action="{{ path('app_comments_create', {reference: project.reference}) }}"
+                  class="card"
+                  data-controller="mention-autocomplete"
+                  data-mention-autocomplete-users-value="{{ users_handles|json_encode }}">
+                <input type="hidden" name="_token" value="{{ csrf_token('comment_' ~ project.id) }}">
+                <label class="text-xs text-muted" style="display: block; letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: var(--space-2);">
+                    Nouveau message
+                </label>
+                <textarea name="body" rows="3" required
+                          data-mention-autocomplete-target="input"
+                          placeholder="Écrire… utilisez @prenom pour mentionner quelqu'un."
+                          style="width: 100%; padding: var(--space-3); border: 1px solid var(--color-line); border-radius: var(--radius-sm); background-color: var(--color-ivory); font-family: var(--font-sans); resize: vertical;"></textarea>
+                <div data-mention-autocomplete-target="suggestions"
+                     style="display: none; margin-top: var(--space-2); border: 1px solid var(--color-line); border-radius: var(--radius-sm); max-height: 180px; overflow-y: auto; background: var(--color-ivory);"></div>
+                <div style="display: flex; justify-content: flex-end; margin-top: var(--space-3);">
+                    <button type="submit" class="btn btn--primary">Envoyer</button>
+                </div>
+            </form>
+        </section>
+
+        <aside class="stack">
+            <article class="card">
+                <h3 class="card__title">Équipe</h3>
+                <p class="text-sm">
+                    <span class="text-muted">Designer&nbsp;:</span> {{ project.assignedDesigner ? project.assignedDesigner.fullName : '—' }}<br>
+                    <span class="text-muted">Joaillier&nbsp;:</span> {{ project.assignedJeweler ? project.assignedJeweler.fullName : '—' }}<br>
+                    <span class="text-muted">Sertisseur&nbsp;:</span> {{ project.assignedSetter ? project.assignedSetter.fullName : '—' }}
+                </p>
+            </article>
+
+            <article class="card">
+                <h3 class="card__title">Finances (aperçu)</h3>
+                <p class="text-sm">
+                    <span class="text-muted">Budget cible&nbsp;:</span> {{ (project.budgetTarget / 100)|format_currency('EUR', locale='fr') }}<br>
+                    <span class="text-muted">Prix de vente&nbsp;:</span> <strong>{{ (project.sellingPrice / 100)|format_currency('EUR', locale='fr') }}</strong>
+                </p>
+                <p class="text-xs text-muted" style="margin-top: var(--space-2);">Module finances complet en Phase 3.</p>
+            </article>
+
+            <article class="card">
+                <h3 class="card__title">Avancement</h3>
+                <p style="font-family: var(--font-serif); font-size: var(--text-3xl); color: var(--color-gold-deep); margin-bottom: var(--space-1);">
+                    {{ project.progressPercent }}%
+                </p>
+                <p class="text-xs text-muted">Étapes complétées sur étapes applicables.</p>
+            </article>
+        </aside>
+    </div>
+{% endblock %}
