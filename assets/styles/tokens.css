@@ -1,0 +1,46 @@
+:root {
+    --color-ivory: #FAF8F3;
+    --color-paper: #F5F2EB;
+    --color-ink: #1A1A1A;
+    --color-ink-soft: #4A4A48;
+    --color-ink-muted: #8A8784;
+    --color-line: #E5DFD2;
+
+    --color-gold: #B8935A;
+    --color-gold-soft: #D4B584;
+    --color-gold-deep: #8E6E3E;
+
+    --color-success: #5B7A52;
+    --color-warning: #B07A2E;
+    --color-danger: #8E3B3B;
+
+    --font-serif: "Cormorant Garamond", "EB Garamond", Georgia, serif;
+    --font-sans: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    --font-mono: "JetBrains Mono", ui-monospace, monospace;
+
+    --text-xs: 0.75rem;
+    --text-sm: 0.875rem;
+    --text-base: 1rem;
+    --text-lg: 1.125rem;
+    --text-xl: 1.375rem;
+    --text-2xl: 1.75rem;
+    --text-3xl: 2.25rem;
+    --text-4xl: 3rem;
+
+    --space-1: 4px;
+    --space-2: 8px;
+    --space-3: 12px;
+    --space-4: 16px;
+    --space-5: 24px;
+    --space-6: 32px;
+    --space-7: 48px;
+    --space-8: 64px;
+
+    --radius-sm: 2px;
+    --radius-md: 4px;
+
+    --transition-base: 150ms ease;
+
+    --sidebar-width: 220px;
+    --max-page-width: 1280px;
+}

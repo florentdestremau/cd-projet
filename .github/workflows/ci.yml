@@ -1,0 +1,60 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  lint:
+    name: Lint (${{ matrix.linter.name }})
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        linter:
+          - name: PHPStan
+            command: vendor/bin/phpstan analyse -c phpstan.neon.dist --no-progress
+          - name: Rector
+            command: vendor/bin/rector process --dry-run --no-progress-bar
+          - name: PHP CS Fixer
+            command: vendor/bin/php-cs-fixer fix --dry-run --diff
+          - name: Twig CS Fixer
+            command: vendor/bin/twig-cs-fixer lint templates/
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.4'
+          tools: composer
+          coverage: none
+
+      - name: Install dependencies
+        run: composer install --prefer-dist --no-progress
+
+      - name: Run ${{ matrix.linter.name }}
+        run: ${{ matrix.linter.command }}
+
+  test:
+    name: Tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.4'
+          extensions: pdo_sqlite
+          tools: composer
+          coverage: none
+
+      - name: Install dependencies
+        run: composer install --prefer-dist --no-progress
+
+      - name: Run migrations (test env)
+        run: php bin/console doctrine:migrations:migrate --no-interaction --env=test
+
+      - name: Run tests
+        run: php bin/phpunit

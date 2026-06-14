@@ -1,0 +1,69 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Bienvenue{% endblock %}
+
+{% block body %}
+    <div class="page__header">
+        <div>
+            <h1 class="page__title">Hey, Marie</h1>
+            <p class="page__subtitle">Voici ce qui a bougé depuis votre dernière visite.</p>
+        </div>
+        <div class="page__actions">
+            <button class="btn btn--secondary">{{ ux_icon('lucide:filter') }} Filtrer</button>
+            <button class="btn btn--primary">{{ ux_icon('lucide:plus') }} Nouveau projet</button>
+        </div>
+    </div>
+
+    <div class="stack stack--lg">
+        <section class="stack">
+            <h2>Mentions et réponses</h2>
+            <div class="grid-2">
+                <article class="card">
+                    <h3 class="card__title">BAG-2026-042 · Bague solitaire</h3>
+                    <p class="card__subtitle">Paul D. · il y a 2 h</p>
+                    <p>« <strong>@Marie</strong> le ton du rose vous convient, je peux lancer la fonte ? »</p>
+                </article>
+                <article class="card">
+                    <h3 class="card__title">BAG-2026-031 · Alliance pavée</h3>
+                    <p class="card__subtitle">Camille R. · hier</p>
+                    <p>« <strong>@Marie</strong> validation client reçue par mail, je classe dans le projet. »</p>
+                </article>
+            </div>
+        </section>
+
+        <section class="stack">
+            <h2>Vos projets en cours</h2>
+            <div class="grid-3">
+                <article class="card">
+                    <span class="tag tag--gold">CAO 3D</span>
+                    <h3 class="card__title" style="margin-top: var(--space-3)">BAG-2026-042</h3>
+                    <p class="card__subtitle">Bague solitaire diamant 1 ct — Mme Dubois</p>
+                    <p class="text-sm text-soft">Livraison prévue le 15 juillet 2026.</p>
+                </article>
+                <article class="card">
+                    <span class="tag tag--success">Sertissage</span>
+                    <h3 class="card__title" style="margin-top: var(--space-3)">BAG-2026-031</h3>
+                    <p class="card__subtitle">Alliance pavée — M. Lefèvre</p>
+                    <p class="text-sm text-soft">Livraison prévue le 5 juillet 2026.</p>
+                </article>
+                <article class="card">
+                    <span class="tag tag--warning">Validation client</span>
+                    <h3 class="card__title" style="margin-top: var(--space-3)">BAG-2026-058</h3>
+                    <p class="card__subtitle">Chevalière monogramme — Maison Cartier</p>
+                    <p class="text-sm text-soft">Relance à faire — devis envoyé il y a 4 jours.</p>
+                </article>
+            </div>
+        </section>
+
+        <section class="card">
+            <h3 class="card__title">Phase 0 — Bootstrap terminé</h3>
+            <p>
+                Cette page sert de témoin du style définitif (palette
+                <code>#FAF8F3</code> / <code>#B8935A</code>, Cormorant Garamond + Inter,
+                composants <span class="tag">card</span>
+                <span class="tag tag--gold">tag-gold</span>
+                <span class="tag tag--success">tag-success</span>).
+            </p>
+        </section>
+    </div>
+{% endblock %}
