@@ -1,0 +1,87 @@
+{% extends 'base.html.twig' %}
+{% block title %}{{ invoice.reference }}{% endblock %}
+{% block body %}
+    <div class="page__header">
+        <div>
+            <p class="text-xs text-muted" style="letter-spacing: 0.16em; text-transform: uppercase;">
+                <a href="{{ path('app_projects_show', {reference: invoice.project.reference}) }}">{{ invoice.project.reference }}</a> · {{ invoice.project.title }}
+            </p>
+            <h1 class="page__title">{{ invoice.reference }}</h1>
+            <p class="page__subtitle">Facture <strong>{{ invoice.status.label|lower }}</strong>{% if invoice.dueDate %} · échéance {{ invoice.dueDate|format_date('long', locale='fr') }}{% endif %}</p>
+        </div>
+        <div class="page__actions">
+            <a href="{{ path('app_invoices_pdf', {reference: invoice.reference}) }}" class="btn btn--secondary" target="_blank">PDF</a>
+            {% if invoice.status.value == 'draft' %}
+                <form method="post" action="{{ path('app_invoices_status', {reference: invoice.reference}) }}" style="display: inline;">
+                    <input type="hidden" name="_token" value="{{ csrf_token('invoice_status_' ~ invoice.id) }}">
+                    <button name="status" value="sent" class="btn btn--primary">Marquer envoyée</button>
+                </form>
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="grid-2" style="grid-template-columns: 2fr 1fr; align-items: start;">
+        <article class="card">
+            <table style="width: 100%; border-collapse: collapse;">
+                <thead><tr style="border-bottom: 1px solid var(--color-line);">
+                    <th style="text-align: left; padding: var(--space-2); font-family: var(--font-serif); font-style: italic; font-weight: 400;">Description</th>
+                    <th style="text-align: right; padding: var(--space-2); font-family: var(--font-serif); font-style: italic; font-weight: 400;">Qté</th>
+                    <th style="text-align: right; padding: var(--space-2); font-family: var(--font-serif); font-style: italic; font-weight: 400;">PU HT</th>
+                    <th style="text-align: right; padding: var(--space-2); font-family: var(--font-serif); font-style: italic; font-weight: 400;">Total HT</th>
+                </tr></thead>
+                <tbody>
+                {% for item in invoice.items %}
+                    <tr style="border-bottom: 1px solid var(--color-line);">
+                        <td style="padding: var(--space-2);">{{ item.description }}</td>
+                        <td style="padding: var(--space-2); text-align: right;">{{ item.quantity }}</td>
+                        <td style="padding: var(--space-2); text-align: right; font-variant-numeric: tabular-nums;">{{ (item.unitPriceHt / 100)|format_currency('EUR', locale='fr') }}</td>
+                        <td style="padding: var(--space-2); text-align: right; font-variant-numeric: tabular-nums;">{{ (item.totalHt / 100)|format_currency('EUR', locale='fr') }}</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+                <tfoot>
+                    <tr><td colspan="3" style="text-align: right; padding: var(--space-3); color: var(--color-ink-muted);">Total HT</td><td style="text-align: right; padding: var(--space-3); font-variant-numeric: tabular-nums;">{{ (invoice.totalHt / 100)|format_currency('EUR', locale='fr') }}</td></tr>
+                    <tr><td colspan="3" style="text-align: right; padding: var(--space-3); color: var(--color-ink-muted);">TVA {{ (invoice.vatRate / 100)|number_format(2, ',', ' ') }} %</td><td style="text-align: right; padding: var(--space-3); font-variant-numeric: tabular-nums;">{{ ((invoice.totalTtc - invoice.totalHt) / 100)|format_currency('EUR', locale='fr') }}</td></tr>
+                    <tr><td colspan="3" style="text-align: right; padding: var(--space-3); font-weight: 600;">Total TTC</td><td style="text-align: right; padding: var(--space-3); font-variant-numeric: tabular-nums; font-weight: 600; font-size: var(--text-lg);">{{ (invoice.totalTtc / 100)|format_currency('EUR', locale='fr') }}</td></tr>
+                </tfoot>
+            </table>
+        </article>
+
+        <aside class="stack">
+            <article class="card">
+                <h3 class="card__title">Paiements</h3>
+                {% if invoice.payments|length > 0 %}
+                    <ul style="list-style: none; padding: 0; margin: 0;">
+                        {% for p in invoice.payments %}
+                            <li style="padding: var(--space-2) 0; border-bottom: 1px solid var(--color-line); display: flex; justify-content: space-between;">
+                                <span class="text-sm">{{ p.receivedAt|format_date('short', locale='fr') }} · {{ p.method.label }}</span>
+                                <strong style="font-variant-numeric: tabular-nums;">{{ (p.amount / 100)|format_currency('EUR', locale='fr') }}</strong>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                {% else %}
+                    <p class="text-muted">Aucun paiement.</p>
+                {% endif %}
+                <p style="margin-top: var(--space-3); font-size: var(--text-sm);">
+                    <span class="text-muted">Reçu&nbsp;:</span> {{ (invoice.amountPaid / 100)|format_currency('EUR', locale='fr') }}<br>
+                    <span class="text-muted">Solde dû&nbsp;:</span> <strong>{{ (invoice.balanceDue / 100)|format_currency('EUR', locale='fr') }}</strong>
+                </p>
+            </article>
+
+            {% if invoice.balanceDue > 0 %}
+                <article class="card">
+                    <h3 class="card__title">Enregistrer un paiement</h3>
+                    <form method="post" action="{{ path('app_invoices_payment', {reference: invoice.reference}) }}" class="stack">
+                        <input type="hidden" name="_token" value="{{ csrf_token('payment_' ~ invoice.id) }}">
+                        <input type="number" name="amount" step="0.01" required placeholder="Montant" style="width: 100%; padding: var(--space-2); border: 1px solid var(--color-line); border-radius: var(--radius-sm); background: var(--color-ivory);">
+                        <select name="method" style="width: 100%; padding: var(--space-2); border: 1px solid var(--color-line); border-radius: var(--radius-sm); background: var(--color-ivory);">
+                            {% for m in methods %}<option value="{{ m.value }}">{{ m.label }}</option>{% endfor %}
+                        </select>
+                        <input type="text" name="reference" placeholder="Référence (optionnel)" style="width: 100%; padding: var(--space-2); border: 1px solid var(--color-line); border-radius: var(--radius-sm); background: var(--color-ivory);">
+                        <button type="submit" class="btn btn--primary">Enregistrer</button>
+                    </form>
+                </article>
+            {% endif %}
+        </aside>
+    </div>
+{% endblock %}

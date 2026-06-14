@@ -1,0 +1,60 @@
+{% extends 'base.html.twig' %}
+{% block title %}Finances{% endblock %}
+{% block body %}
+    <div class="page__header">
+        <div>
+            <h1 class="page__title">Finances</h1>
+            <p class="page__subtitle">Vue d'ensemble du mois et factures à suivre.</p>
+        </div>
+        <div class="page__actions">
+            <a href="{{ path('app_finances_export', {type: 'invoices'}) }}" class="btn btn--secondary">Export factures</a>
+            <a href="{{ path('app_finances_export', {type: 'payments'}) }}" class="btn btn--secondary">Export paiements</a>
+            <a href="{{ path('app_finances_export', {type: 'expenses'}) }}" class="btn btn--secondary">Export dépenses</a>
+        </div>
+    </div>
+
+    <div class="grid-3" style="margin-bottom: var(--space-7);">
+        <article class="card">
+            <h6>Chiffre d'affaires du mois</h6>
+            <p style="font-family: var(--font-serif); font-size: var(--text-3xl); margin: var(--space-3) 0;">{{ (ca_month / 100)|format_currency('EUR', locale='fr') }}</p>
+            <p class="text-xs text-muted">Factures payées ce mois.</p>
+        </article>
+        <article class="card">
+            <h6>Factures en retard</h6>
+            <p style="font-family: var(--font-serif); font-size: var(--text-3xl); margin: var(--space-3) 0;">{{ overdue|length }}</p>
+            <p class="text-xs text-muted">Solde dû : {{ (overdue_total / 100)|format_currency('EUR', locale='fr') }}</p>
+        </article>
+        <article class="card">
+            <h6>Export comptable</h6>
+            <p class="text-sm" style="margin: var(--space-3) 0;">Période par défaut : début d'année → aujourd'hui. Personnalisez via les query params <code>?from=YYYY-MM-DD&to=YYYY-MM-DD</code>.</p>
+        </article>
+    </div>
+
+    <h2>Factures en retard</h2>
+    <article class="card" style="margin-top: var(--space-4);">
+        {% if overdue|length > 0 %}
+            <table style="width: 100%; border-collapse: collapse;">
+                <thead><tr style="border-bottom: 1px solid var(--color-line);">
+                    <th style="text-align: left; padding: var(--space-2);">Référence</th>
+                    <th style="text-align: left; padding: var(--space-2);">Projet</th>
+                    <th style="text-align: left; padding: var(--space-2);">Client</th>
+                    <th style="text-align: left; padding: var(--space-2);">Échéance</th>
+                    <th style="text-align: right; padding: var(--space-2);">Solde dû</th>
+                </tr></thead>
+                <tbody>
+                {% for inv in overdue %}
+                    <tr style="border-bottom: 1px solid var(--color-line);">
+                        <td style="padding: var(--space-2);"><a href="{{ path('app_invoices_show', {reference: inv.reference}) }}">{{ inv.reference }}</a></td>
+                        <td style="padding: var(--space-2);">{{ inv.project.reference }}</td>
+                        <td style="padding: var(--space-2);" class="text-soft">{{ inv.project.client.displayName }}</td>
+                        <td style="padding: var(--space-2);" class="text-soft">{{ inv.dueDate|format_date('short', locale='fr') }}</td>
+                        <td style="padding: var(--space-2); text-align: right; font-variant-numeric: tabular-nums;">{{ (inv.balanceDue / 100)|format_currency('EUR', locale='fr') }}</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            <p class="text-muted">Aucune facture en retard. ✦</p>
+        {% endif %}
+    </article>
+{% endblock %}

@@ -43,6 +43,125 @@ final class AppFixtures extends Fixture
         $this->createProjects($manager, $users, $clients);
 
         $manager->flush();
+
+        $this->createFinanceData($manager);
+        $manager->flush();
+    }
+
+    private function createFinanceData(ObjectManager $manager): void
+    {
+        $projectRepo = $manager->getRepository(\App\Entity\Project::class);
+        $projects = $projectRepo->findAll();
+        $quoteCounter = [];
+        $invoiceCounter = [];
+
+        foreach ($projects as $project) {
+            assert($project instanceof \App\Entity\Project);
+            $year = $project->getCreatedAt()->format('Y');
+            $quoteCounter[$year] = ($quoteCounter[$year] ?? 0) + 1;
+
+            // Devis pour tous les projets sauf premiers stages
+            if ($project->getCurrentStage()->position() >= \App\Enum\ProjectStage::CLIENT_VALIDATION->position()
+                || $project->getStatus() === \App\Enum\ProjectStatus::DELIVERED) {
+                $quote = new \App\Entity\Quote();
+                $quote->setProject($project);
+                $quote->setReference(sprintf('DEV-%s-%03d', $year, $quoteCounter[$year]));
+                $quote->setVatRate(2000);
+                $quote->setValidUntil($project->getCreatedAt()->modify('+45 days'));
+                $quote->setStatus(\App\Enum\QuoteStatus::ACCEPTED);
+                $quote->setSentAt($project->getCreatedAt()->modify('+2 days'));
+                $quote->setAcceptedAt($project->getCreatedAt()->modify('+5 days'));
+
+                $items = [
+                    ['Création unique — modélisation et fabrication', 1, $project->getSellingPrice() * 0.7],
+                    ['Pierre centrale', 1, $project->getSellingPrice() * 0.2],
+                    ['Sertissage et finitions', 1, $project->getSellingPrice() * 0.1],
+                ];
+                foreach ($items as [$desc, $qty, $price]) {
+                    $item = new \App\Entity\QuoteItem();
+                    $item->setDescription($desc);
+                    $item->setQuantity((int) $qty);
+                    $item->setUnitPriceHt((int) round($price / 1.20));
+                    $quote->addItem($item);
+                }
+
+                $ref = new \ReflectionProperty($quote, 'createdAt');
+                $ref->setValue($quote, $project->getCreatedAt()->modify('+1 day'));
+                $manager->persist($quote);
+
+                // Facture pour projets livrés ou en aval
+                if ($project->getStatus() === \App\Enum\ProjectStatus::DELIVERED
+                    || $project->getCurrentStage()->position() >= \App\Enum\ProjectStage::DELIVERY->position()) {
+                    $invoiceCounter[$year] = ($invoiceCounter[$year] ?? 0) + 1;
+                    $invoice = new \App\Entity\Invoice();
+                    $invoice->setProject($project);
+                    $invoice->setQuote($quote);
+                    $invoice->setReference(sprintf('FAC-%s-%03d', $year, $invoiceCounter[$year]));
+                    $invoice->setVatRate(2000);
+                    $invoice->setStatus(\App\Enum\InvoiceStatus::SENT);
+                    $invoice->setSentAt($project->getDeliveredAt() ?? $project->getCreatedAt()->modify('+40 days'));
+                    $invoice->setDueDate(($project->getDeliveredAt() ?? $project->getCreatedAt())->modify('+30 days'));
+                    foreach ($quote->getItems() as $qi) {
+                        $invItem = new \App\Entity\InvoiceItem();
+                        $invItem->setDescription($qi->getDescription());
+                        $invItem->setQuantity($qi->getQuantity());
+                        $invItem->setUnitPriceHt($qi->getUnitPriceHt());
+                        $invoice->addItem($invItem);
+                    }
+
+                    $refInv = new \ReflectionProperty($invoice, 'createdAt');
+                    $refInv->setValue($invoice, $invoice->getSentAt());
+
+                    if ($project->getStatus() === \App\Enum\ProjectStatus::DELIVERED && $this->faker->boolean(85)) {
+                        $payment = new \App\Entity\Payment();
+                        $payment->setInvoice($invoice);
+                        $payment->setAmount($invoice->getTotalTtc());
+                        $payment->setMethod(\App\Enum\PaymentMethod::TRANSFER);
+                        $payment->setReceivedAt($invoice->getSentAt()->modify('+'.$this->faker->numberBetween(3, 25).' days'));
+                        $invoice->addPayment($payment);
+                        $invoice->setStatus(\App\Enum\InvoiceStatus::PAID);
+                        $invoice->setPaidAt($payment->getReceivedAt());
+                        $manager->persist($payment);
+                    } elseif ($project->getStatus() === \App\Enum\ProjectStatus::ACTIVE && $this->faker->boolean(60)) {
+                        // Acompte 50%
+                        $payment = new \App\Entity\Payment();
+                        $payment->setInvoice($invoice);
+                        $payment->setAmount((int) ($invoice->getTotalTtc() * 0.5));
+                        $payment->setMethod(\App\Enum\PaymentMethod::TRANSFER);
+                        $payment->setReceivedAt($invoice->getSentAt()->modify('+10 days'));
+                        $payment->setReference('Acompte');
+                        $invoice->addPayment($payment);
+                        $manager->persist($payment);
+                    }
+
+                    $manager->persist($invoice);
+                }
+            }
+
+            // Dépenses imputées
+            $nbExpenses = $this->faker->numberBetween(2, 5);
+            $categories = \App\Enum\ExpenseCategory::cases();
+            for ($i = 0; $i < $nbExpenses; $i++) {
+                $expense = new \App\Entity\Expense();
+                $expense->setProject($project);
+                $expense->setCategory($this->faker->randomElement($categories));
+                $expense->setDescription($this->faker->randomElement([
+                    'Or 18k 8g',
+                    'Diamant 0.75ct VVS1',
+                    'Fonte par sous-traitant',
+                    'Sertissage spécialisé',
+                    'Polissage final',
+                    'Expédition assurée',
+                    'Boîte écrin gravée',
+                ]));
+                $expense->setSupplierName($this->faker->company());
+                $amount = $this->faker->numberBetween(50_00, 8000_00);
+                $expense->setAmountHt($amount);
+                $expense->setVatAmount((int) round($amount * 0.20));
+                $expense->setOccurredAt($project->getCreatedAt()->modify('+'.$this->faker->numberBetween(0, 30).' days'));
+                $manager->persist($expense);
+            }
+        }
     }
 
     /** @return array<string, User> */

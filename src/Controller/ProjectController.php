@@ -61,6 +61,9 @@ final class ProjectController extends AbstractController
         ProjectRepository $repository,
         CommentRepository $commentRepository,
         UserRepository $userRepository,
+        \App\Repository\QuoteRepository $quoteRepository,
+        \App\Repository\InvoiceRepository $invoiceRepository,
+        \App\Repository\ExpenseRepository $expenseRepository,
     ): Response {
         $project = $repository->findOneBy(['reference' => $reference]);
         if (!$project instanceof Project) {
@@ -77,11 +80,23 @@ final class ProjectController extends AbstractController
             $userRepository->findAll(),
         );
 
+        $quotes = $quoteRepository->findBy(['project' => $project], ['createdAt' => 'DESC']);
+        $invoices = $invoiceRepository->findBy(['project' => $project], ['createdAt' => 'DESC']);
+        $expenses = $expenseRepository->findBy(['project' => $project], ['occurredAt' => 'DESC']);
+        $expensesTotal = $expenseRepository->totalForProject($project);
+        $margin = $project->getSellingPrice() - $expensesTotal;
+
         return $this->render('project/show.html.twig', [
             'project' => $project,
             'comments' => $comments,
             'stages' => ProjectStage::ordered(),
             'users_handles' => $usersHandles,
+            'quotes' => $quotes,
+            'invoices' => $invoices,
+            'expenses' => $expenses,
+            'expenses_total' => $expensesTotal,
+            'margin' => $margin,
+            'expense_categories' => \App\Enum\ExpenseCategory::cases(),
         ]);
     }
 }

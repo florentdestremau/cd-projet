@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html><head><meta charset="utf-8">
+<style>
+body { font-family: 'DejaVu Serif', serif; color: #1A1A1A; margin: 32px; background: #FAF8F3; }
+h1 { font-size: 28px; margin: 0 0 8px 0; letter-spacing: 0.04em; }
+.brand { font-family: 'DejaVu Serif', serif; font-size: 22px; color: #B8935A; letter-spacing: 0.08em; text-transform: uppercase; }
+.meta { color: #4A4A48; font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 32px; }
+.client { float: right; text-align: right; }
+table { width: 100%; border-collapse: collapse; margin-top: 24px; }
+th { text-align: left; border-bottom: 1px solid #B8935A; padding: 8px 4px; font-style: italic; font-weight: normal; color: #4A4A48; }
+td { padding: 8px 4px; border-bottom: 1px solid #E5DFD2; }
+.right { text-align: right; }
+.total { font-size: 16px; font-weight: bold; }
+.footer { margin-top: 64px; color: #8A8784; font-size: 10px; text-align: center; }
+</style></head><body>
+<div class="brand">Maison · Atelier</div>
+<div class="meta">FACTURE · {{ invoice.reference }} · {{ invoice.createdAt|format_date('long', locale='fr') }}{% if invoice.dueDate %} · ÉCHÉANCE {{ invoice.dueDate|format_date('long', locale='fr') }}{% endif %}</div>
+
+<div class="client">
+    <strong>{{ invoice.project.client.displayName }}</strong>
+    {% if invoice.project.client.address %}<br>{{ invoice.project.client.address|nl2br }}{% endif %}
+</div>
+
+<h1>{{ invoice.project.title }}</h1>
+<p>Référence projet : {{ invoice.project.reference }}</p>
+
+<table>
+<thead><tr><th>Description</th><th class="right">Qté</th><th class="right">PU HT</th><th class="right">Total HT</th></tr></thead>
+<tbody>
+{% for item in invoice.items %}
+<tr><td>{{ item.description }}</td><td class="right">{{ item.quantity }}</td><td class="right">{{ (item.unitPriceHt / 100)|format_currency('EUR', locale='fr') }}</td><td class="right">{{ (item.totalHt / 100)|format_currency('EUR', locale='fr') }}</td></tr>
+{% endfor %}
+</tbody>
+<tfoot>
+<tr><td colspan="3" class="right">Total HT</td><td class="right">{{ (invoice.totalHt / 100)|format_currency('EUR', locale='fr') }}</td></tr>
+<tr><td colspan="3" class="right">TVA {{ (invoice.vatRate / 100)|number_format(2, ',', ' ') }} %</td><td class="right">{{ ((invoice.totalTtc - invoice.totalHt) / 100)|format_currency('EUR', locale='fr') }}</td></tr>
+<tr><td colspan="3" class="right total">Total TTC</td><td class="right total">{{ (invoice.totalTtc / 100)|format_currency('EUR', locale='fr') }}</td></tr>
+</tfoot>
+</table>
+
+<div class="footer">Maison · Atelier · Bijouterie luxe</div>
+</body></html>

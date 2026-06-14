@@ -82,12 +82,63 @@
             </article>
 
             <article class="card">
-                <h3 class="card__title">Finances (aperçu)</h3>
+                <h3 class="card__title">Finances</h3>
                 <p class="text-sm">
                     <span class="text-muted">Budget cible&nbsp;:</span> {{ (project.budgetTarget / 100)|format_currency('EUR', locale='fr') }}<br>
-                    <span class="text-muted">Prix de vente&nbsp;:</span> <strong>{{ (project.sellingPrice / 100)|format_currency('EUR', locale='fr') }}</strong>
+                    <span class="text-muted">Prix de vente&nbsp;:</span> <strong>{{ (project.sellingPrice / 100)|format_currency('EUR', locale='fr') }}</strong><br>
+                    <span class="text-muted">Dépenses imputées&nbsp;:</span> {{ (expenses_total / 100)|format_currency('EUR', locale='fr') }}<br>
+                    <span class="text-muted">Marge prévue&nbsp;:</span> <strong style="color: {{ margin > 0 ? 'var(--color-success)' : 'var(--color-danger)' }};">{{ (margin / 100)|format_currency('EUR', locale='fr') }}</strong>
                 </p>
-                <p class="text-xs text-muted" style="margin-top: var(--space-2);">Module finances complet en Phase 3.</p>
+                <div style="display: flex; gap: var(--space-2); margin-top: var(--space-3);">
+                    <a href="{{ path('app_quotes_new', {reference: project.reference}) }}" class="btn btn--ghost" style="font-size: var(--text-xs);">+ Devis</a>
+                    <a href="{{ path('app_invoices_new', {reference: project.reference}) }}" class="btn btn--ghost" style="font-size: var(--text-xs);">+ Facture</a>
+                </div>
+            </article>
+
+            {% if quotes|length > 0 or invoices|length > 0 %}
+                <article class="card">
+                    <h3 class="card__title">Documents</h3>
+                    {% for q in quotes %}
+                        <p class="text-sm" style="display: flex; justify-content: space-between; padding: var(--space-1) 0;">
+                            <a href="{{ path('app_quotes_show', {reference: q.reference}) }}">{{ q.reference }}</a>
+                            <span><span class="tag">{{ q.status.label }}</span> <span style="font-variant-numeric: tabular-nums;">{{ (q.totalTtc / 100)|format_currency('EUR', locale='fr') }}</span></span>
+                        </p>
+                    {% endfor %}
+                    {% for i in invoices %}
+                        <p class="text-sm" style="display: flex; justify-content: space-between; padding: var(--space-1) 0;">
+                            <a href="{{ path('app_invoices_show', {reference: i.reference}) }}">{{ i.reference }}</a>
+                            <span><span class="tag tag--gold">{{ i.status.label }}</span> <span style="font-variant-numeric: tabular-nums;">{{ (i.totalTtc / 100)|format_currency('EUR', locale='fr') }}</span></span>
+                        </p>
+                    {% endfor %}
+                </article>
+            {% endif %}
+
+            <article class="card">
+                <h3 class="card__title">Dépenses</h3>
+                {% if expenses|length > 0 %}
+                    <ul style="list-style: none; padding: 0; margin: 0;">
+                        {% for e in expenses %}
+                            <li style="display: flex; justify-content: space-between; align-items: baseline; padding: var(--space-1) 0; border-bottom: 1px solid var(--color-line); font-size: var(--text-sm);">
+                                <span>{{ e.description }} <span class="text-muted">· {{ e.category.label }}{% if e.supplierName %} · {{ e.supplierName }}{% endif %}</span></span>
+                                <span style="font-variant-numeric: tabular-nums;">{{ (e.amountHt / 100)|format_currency('EUR', locale='fr') }}</span>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                {% endif %}
+                <details style="margin-top: var(--space-3);">
+                    <summary class="text-sm text-muted" style="cursor: pointer;">+ Ajouter une dépense</summary>
+                    <form method="post" action="{{ path('app_expenses_create', {reference: project.reference}) }}" class="stack" style="margin-top: var(--space-3);">
+                        <input type="hidden" name="_token" value="{{ csrf_token('expense_' ~ project.id) }}">
+                        <input type="text" name="description" placeholder="Description" required style="padding: var(--space-2); border: 1px solid var(--color-line); border-radius: var(--radius-sm); background: var(--color-ivory);">
+                        <input type="text" name="supplier" placeholder="Fournisseur" style="padding: var(--space-2); border: 1px solid var(--color-line); border-radius: var(--radius-sm); background: var(--color-ivory);">
+                        <select name="category" style="padding: var(--space-2); border: 1px solid var(--color-line); border-radius: var(--radius-sm); background: var(--color-ivory);">
+                            {% for c in expense_categories %}<option value="{{ c.value }}">{{ c.label }}</option>{% endfor %}
+                        </select>
+                        <input type="number" step="0.01" name="amountHt" placeholder="Montant HT" required style="padding: var(--space-2); border: 1px solid var(--color-line); border-radius: var(--radius-sm); background: var(--color-ivory);">
+                        <input type="date" name="occurredAt" style="padding: var(--space-2); border: 1px solid var(--color-line); border-radius: var(--radius-sm); background: var(--color-ivory);">
+                        <button type="submit" class="btn btn--secondary">Enregistrer</button>
+                    </form>
+                </details>
             </article>
 
             <article class="card">

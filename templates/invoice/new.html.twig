@@ -1,0 +1,57 @@
+{% extends 'base.html.twig' %}
+{% block title %}Nouvelle facture{% endblock %}
+{% block body %}
+    <div class="page__header">
+        <div>
+            <p class="text-xs text-muted" style="letter-spacing: 0.16em; text-transform: uppercase;">{{ project.reference }} · {{ project.title }}</p>
+            <h1 class="page__title">Nouvelle facture</h1>
+        </div>
+    </div>
+
+    <form method="post" class="card stack">
+        <input type="hidden" name="_token" value="{{ csrf_token('invoice_new_' ~ project.id) }}">
+
+        {% if accepted_quotes|length > 0 %}
+            <div>
+                <label class="text-xs text-muted" style="display: block; letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: var(--space-2);">Facturer un devis accepté</label>
+                <select name="quote" style="width: 100%; padding: var(--space-2) 0; border: none; border-bottom: 1px solid var(--color-line); background: transparent;">
+                    <option value="">— Saisie manuelle —</option>
+                    {% for q in accepted_quotes %}
+                        <option value="{{ q.reference }}">{{ q.reference }} — {{ (q.totalTtc / 100)|format_currency('EUR', locale='fr') }}</option>
+                    {% endfor %}
+                </select>
+                <p class="text-xs text-muted" style="margin-top: var(--space-2);">Si choisi, les lignes du devis seront copiées telles quelles.</p>
+            </div>
+        {% endif %}
+
+        <div class="grid-3">
+            <div>
+                <label class="text-xs text-muted" style="display: block; letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: var(--space-2);">Échéance</label>
+                <input type="date" name="dueDate" style="width: 100%; padding: var(--space-2) 0; border: none; border-bottom: 1px solid var(--color-line); background: transparent;">
+            </div>
+            <div>
+                <label class="text-xs text-muted" style="display: block; letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: var(--space-2);">TVA %</label>
+                <input type="number" step="0.01" name="vatRate" value="20.00" style="width: 100%; padding: var(--space-2) 0; border: none; border-bottom: 1px solid var(--color-line); background: transparent;">
+            </div>
+        </div>
+
+        <h3 class="card__title">Lignes (si saisie manuelle)</h3>
+        <table style="width: 100%; border-collapse: collapse;">
+            <thead><tr><th style="text-align: left;">Description</th><th>Qté</th><th>PU HT</th></tr></thead>
+            <tbody>
+                {% for i in 0..2 %}
+                    <tr>
+                        <td><input name="descriptions[]" type="text" style="width: 100%; padding: var(--space-2); border: 1px solid var(--color-line); border-radius: var(--radius-sm); background: var(--color-ivory);"></td>
+                        <td><input name="quantities[]" type="number" value="1" style="width: 80px; padding: var(--space-2); border: 1px solid var(--color-line); border-radius: var(--radius-sm); background: var(--color-ivory);"></td>
+                        <td><input name="prices[]" type="number" value="0" step="0.01" style="width: 120px; padding: var(--space-2); border: 1px solid var(--color-line); border-radius: var(--radius-sm); background: var(--color-ivory);"></td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <div style="display: flex; justify-content: flex-end; gap: var(--space-3);">
+            <a href="{{ path('app_projects_show', {reference: project.reference}) }}" class="btn btn--ghost">Annuler</a>
+            <button type="submit" class="btn btn--primary">Créer la facture</button>
+        </div>
+    </form>
+{% endblock %}

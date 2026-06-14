@@ -39,7 +39,7 @@
                     <a href="#" class="sidebar__link">
                         {{ ux_icon('lucide:users') }} Clients
                     </a>
-                    <a href="#" class="sidebar__link">
+                    <a href="{{ path('app_finances_dashboard') }}" class="sidebar__link {{ app.request.attributes.get('_route') starts with 'app_finances' ? 'sidebar__link--active' }}">
                         {{ ux_icon('lucide:receipt') }} Finances
                     </a>
                     <a href="#" class="sidebar__link">
