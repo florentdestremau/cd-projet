@@ -31,6 +31,7 @@ security:
                 always_remember_me: true
 
     access_control:
+        - { path: ^/up, roles: PUBLIC_ACCESS }
         - { path: ^/login, roles: PUBLIC_ACCESS }
         - { path: ^/portail/, roles: PUBLIC_ACCESS }
         - { path: ^/sw\.js, roles: PUBLIC_ACCESS }
