@@ -1,0 +1,49 @@
+{% extends 'base.html.twig' %}
+{% block title %}Paramètres{% endblock %}
+{% block body %}
+    <div class="page__header">
+        <div>
+            <h1 class="page__title">Paramètres de l'entreprise</h1>
+            <p class="page__subtitle">Affichés sur le portail client, les devis et factures PDF.</p>
+        </div>
+    </div>
+
+    <form method="post" class="card stack">
+        <input type="hidden" name="_token" value="{{ csrf_token('admin_settings') }}">
+
+        <div>
+            <label class="text-xs text-muted" style="display: block; letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: var(--space-2);">Nom de la maison</label>
+            <input type="text" name="company_name" value="{{ name }}" placeholder="Ex. Maison Atelier" style="width: 100%; padding: var(--space-3); border: 1px solid var(--color-line); border-radius: var(--radius-sm); background: var(--color-ivory);">
+        </div>
+        <div>
+            <label class="text-xs text-muted" style="display: block; letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: var(--space-2);">Baseline</label>
+            <input type="text" name="company_tagline" value="{{ tagline }}" placeholder="Ex. Bijouterie luxe sur-mesure" style="width: 100%; padding: var(--space-3); border: 1px solid var(--color-line); border-radius: var(--radius-sm); background: var(--color-ivory);">
+        </div>
+        <div>
+            <label class="text-xs text-muted" style="display: block; letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: var(--space-2);">Adresse</label>
+            <textarea name="company_address" rows="3" placeholder="Adresse postale" style="width: 100%; padding: var(--space-3); border: 1px solid var(--color-line); border-radius: var(--radius-sm); background: var(--color-ivory); font-family: var(--font-sans);">{{ address }}</textarea>
+        </div>
+        <div class="grid-2">
+            <div>
+                <label class="text-xs text-muted" style="display: block; letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: var(--space-2);">Email</label>
+                <input type="email" name="company_email" value="{{ email }}" style="width: 100%; padding: var(--space-3); border: 1px solid var(--color-line); border-radius: var(--radius-sm); background: var(--color-ivory);">
+            </div>
+            <div>
+                <label class="text-xs text-muted" style="display: block; letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: var(--space-2);">Téléphone</label>
+                <input type="text" name="company_phone" value="{{ phone }}" style="width: 100%; padding: var(--space-3); border: 1px solid var(--color-line); border-radius: var(--radius-sm); background: var(--color-ivory);">
+            </div>
+        </div>
+        <div>
+            <label class="text-xs text-muted" style="display: block; letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: var(--space-2);">Mentions légales</label>
+            <textarea name="company_legal" rows="3" placeholder="SIRET, capital, mentions imprimées en bas de facture" style="width: 100%; padding: var(--space-3); border: 1px solid var(--color-line); border-radius: var(--radius-sm); background: var(--color-ivory); font-family: var(--font-sans);">{{ legal }}</textarea>
+        </div>
+        <div>
+            <label class="text-xs text-muted" style="display: block; letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: var(--space-2);">TVA par défaut (%)</label>
+            <input type="number" step="0.01" name="default_vat_rate" value="{{ vat }}" style="width: 100%; padding: var(--space-3); border: 1px solid var(--color-line); border-radius: var(--radius-sm); background: var(--color-ivory);">
+        </div>
+
+        <div style="display: flex; justify-content: flex-end;">
+            <button type="submit" class="btn btn--primary">Enregistrer</button>
+        </div>
+    </form>
+{% endblock %}

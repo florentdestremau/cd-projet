@@ -49,6 +49,36 @@ final class AppFixtures extends Fixture
 
         $this->createFinanceData($manager);
         $manager->flush();
+
+        $this->createSettings($manager);
+        $this->createClientTokens($manager);
+        $manager->flush();
+    }
+
+    private function createSettings(ObjectManager $manager): void
+    {
+        foreach ([
+            'company_name' => 'Maison Atelier',
+            'company_tagline' => 'Bijouterie luxe sur-mesure',
+            'company_address' => "12 rue de la Paix\n75002 Paris",
+            'company_email' => 'contact@maison-atelier.test',
+            'company_phone' => '01 42 60 00 00',
+            'company_legal' => "SARL au capital de 50 000 €\nSIRET 123 456 789 00012\nTVA FR12 123456789",
+            'default_vat_rate' => '20.00',
+        ] as $key => $value) {
+            $manager->persist(new \App\Entity\Setting($key, $value));
+        }
+    }
+
+    private function createClientTokens(ObjectManager $manager): void
+    {
+        $projects = $manager->getRepository(\App\Entity\Project::class)->findAll();
+        foreach ($projects as $project) {
+            assert($project instanceof \App\Entity\Project);
+            if ($project->getStatus() === \App\Enum\ProjectStatus::ACTIVE && $this->faker->boolean(70)) {
+                $project->setClientAccessToken(bin2hex(random_bytes(32)));
+            }
+        }
     }
 
     private function createCatalogues(ObjectManager $manager): void

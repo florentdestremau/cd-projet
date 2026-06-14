@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ project.reference }} — {{ company_name }}</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,500&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    {{ importmap('app') }}
+</head>
+<body>
+    <main style="max-width: 720px; margin: 0 auto; padding: var(--space-7) var(--space-5);">
+        <header style="margin-bottom: var(--space-7); text-align: center;">
+            <h2 style="font-family: var(--font-serif); font-size: var(--text-xl); color: var(--color-gold-deep); letter-spacing: 0.16em; text-transform: uppercase; margin-bottom: var(--space-1);">{{ company_name }}</h2>
+            <p class="text-xs text-muted" style="letter-spacing: 0.1em;">{{ company_tagline }}</p>
+        </header>
+
+        {% for label, messages in app.flashes %}
+            {% for msg in messages %}
+                <div class="card" style="border-left: 3px solid var(--color-gold); margin-bottom: var(--space-5);">{{ msg }}</div>
+            {% endfor %}
+        {% endfor %}
+
+        <article style="margin-bottom: var(--space-7);">
+            <p class="text-xs text-muted" style="letter-spacing: 0.16em; text-transform: uppercase; margin-bottom: var(--space-2);">{{ project.reference }}</p>
+            <h1 style="font-family: var(--font-serif); font-size: var(--text-3xl); margin-bottom: var(--space-3);">{{ project.title }}</h1>
+            <p class="text-soft">
+                Pour <strong>{{ project.client.displayName }}</strong>
+                {% if project.targetDeliveryDate %} · Livraison prévue le {{ project.targetDeliveryDate|format_date('long', locale='fr') }}{% endif %}
+            </p>
+        </article>
+
+        <section style="margin-bottom: var(--space-7);">
+            <h2 style="font-family: var(--font-serif); margin-bottom: var(--space-4);">Avancement</h2>
+            <div style="display: flex; gap: var(--space-2); flex-wrap: wrap;">
+                {% for stage in stages %}
+                    {% set status = project.stageStatuses|filter(s => s.stage == stage)|first %}
+                    {% set done = status and status.completedAt is not null %}
+                    {% set current = stage == project.currentStage %}
+                    <div style="display: flex; align-items: center; gap: var(--space-2); padding: var(--space-2) var(--space-3); border: 1px solid {{ current ? 'var(--color-gold)' : 'var(--color-line)' }}; border-radius: var(--radius-sm); background-color: {{ done ? 'color-mix(in srgb, var(--color-gold) 10%, var(--color-paper))' : 'transparent' }};">
+                        {% if done %}{{ ux_icon('lucide:check', {width: 14, height: 14}) }}
+                        {% elseif current %}{{ ux_icon('lucide:circle-dot', {width: 14, height: 14}) }}
+                        {% else %}{{ ux_icon('lucide:circle', {width: 14, height: 14}) }}{% endif %}
+                        <span class="text-sm">{{ stage.label }}</span>
+                    </div>
+                {% endfor %}
+            </div>
+        </section>
+
+        {% if project.currentStage.value == 'client_validation' %}
+            <section class="card" style="text-align: center; margin-bottom: var(--space-7); padding: var(--space-7);">
+                <h3 style="font-family: var(--font-serif); margin-bottom: var(--space-3);">Validation en attente</h3>
+                <p class="text-soft" style="margin-bottom: var(--space-5);">Avez-vous validé le croquis qui vous a été présenté ?</p>
+                <form method="post" action="{{ path('app_portal_validate', {token: project.clientAccessToken}) }}">
+                    <button type="submit" class="btn btn--primary">Je valide</button>
+                </form>
+            </section>
+        {% endif %}
+
+        {% if quotes|length > 0 or invoices|length > 0 %}
+            <section style="margin-bottom: var(--space-7);">
+                <h2 style="font-family: var(--font-serif); margin-bottom: var(--space-4);">Documents financiers</h2>
+                {% for q in quotes %}
+                    {% if q.status.value in ['sent', 'accepted'] %}
+                        <article class="card" style="margin-bottom: var(--space-3); display: flex; justify-content: space-between; align-items: center;">
+                            <span>Devis {{ q.reference }} <span class="text-muted">· {{ q.status.label }}</span></span>
+                            <a href="{{ path('app_quotes_pdf', {reference: q.reference}) }}" target="_blank" class="btn btn--secondary">Télécharger</a>
+                        </article>
+                    {% endif %}
+                {% endfor %}
+                {% for i in invoices %}
+                    {% if i.status.value in ['sent', 'paid', 'overdue'] %}
+                        <article class="card" style="margin-bottom: var(--space-3); display: flex; justify-content: space-between; align-items: center;">
+                            <span>Facture {{ i.reference }} <span class="text-muted">· {{ i.status.label }}</span></span>
+                            <a href="{{ path('app_invoices_pdf', {reference: i.reference}) }}" target="_blank" class="btn btn--secondary">Télécharger</a>
+                        </article>
+                    {% endif %}
+                {% endfor %}
+            </section>
+        {% endif %}
+
+        <footer style="text-align: center; margin-top: var(--space-8); color: var(--color-ink-muted); font-size: var(--text-xs);">
+            <p>Lien personnel sécurisé. Ne le partagez pas.</p>
+        </footer>
+    </main>
+</body>
+</html>

@@ -142,6 +142,20 @@
             </article>
 
             <article class="card">
+                <h3 class="card__title">Portail client</h3>
+                {% if project.clientAccessToken %}
+                    <p class="text-sm">Lien à partager avec votre client :</p>
+                    <input type="text" readonly value="{{ url('app_portal_show', {token: project.clientAccessToken}) }}" style="width: 100%; padding: var(--space-2); border: 1px solid var(--color-line); border-radius: var(--radius-sm); background: var(--color-paper); font-size: var(--text-xs); margin: var(--space-2) 0;">
+                {% else %}
+                    <p class="text-muted text-sm">Aucun lien généré.</p>
+                {% endif %}
+                <form method="post" action="{{ path('app_projects_token', {reference: project.reference}) }}" style="margin-top: var(--space-2);">
+                    <input type="hidden" name="_token" value="{{ csrf_token('token_' ~ project.id) }}">
+                    <button type="submit" class="btn btn--ghost" style="font-size: var(--text-xs);">{{ project.clientAccessToken ? 'Régénérer le lien' : 'Générer un lien' }}</button>
+                </form>
+            </article>
+
+            <article class="card">
                 <h3 class="card__title">Avancement</h3>
                 <p style="font-family: var(--font-serif); font-size: var(--text-3xl); color: var(--color-gold-deep); margin-bottom: var(--space-1);">
                     {{ project.progressPercent }}%

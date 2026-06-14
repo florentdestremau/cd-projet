@@ -32,6 +32,8 @@ security:
 
     access_control:
         - { path: ^/login, roles: PUBLIC_ACCESS }
+        - { path: ^/portail/, roles: PUBLIC_ACCESS }
+        - { path: ^/sw\.js, roles: PUBLIC_ACCESS }
         - { path: ^/, roles: ROLE_USER }
 
     role_hierarchy:

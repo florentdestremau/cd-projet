@@ -54,6 +54,11 @@
                     <a href="{{ path('app_notifications_prefs') }}" class="sidebar__link {{ app.request.attributes.get('_route') == 'app_notifications_prefs' ? 'sidebar__link--active' }}">
                         {{ ux_icon('lucide:bell') }} Notifications
                     </a>
+                    {% if is_granted('ROLE_ADMIN') %}
+                        <a href="{{ path('app_admin_settings') }}" class="sidebar__link {{ app.request.attributes.get('_route') starts with 'app_admin' ? 'sidebar__link--active' }}">
+                            {{ ux_icon('lucide:settings') }} Paramètres
+                        </a>
+                    {% endif %}
                 </nav>
             </aside>
 

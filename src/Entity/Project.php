@@ -76,6 +76,9 @@ class Project
     #[ORM\OneToMany(targetEntity: ProjectStageStatus::class, mappedBy: 'project', cascade: ['persist', 'remove'], orphanRemoval: true)]
     private Collection $stageStatuses;
 
+    #[ORM\Column(length: 64, nullable: true, unique: true)]
+    private ?string $clientAccessToken = null;
+
     #[ORM\Column]
     private \DateTimeImmutable $createdAt;
 
@@ -121,6 +124,8 @@ class Project
     public function getCreatedAt(): \DateTimeImmutable { return $this->createdAt; }
     public function getUpdatedAt(): \DateTimeImmutable { return $this->updatedAt; }
     public function touch(): self { $this->updatedAt = new \DateTimeImmutable(); return $this; }
+    public function getClientAccessToken(): ?string { return $this->clientAccessToken; }
+    public function setClientAccessToken(?string $t): self { $this->clientAccessToken = $t; return $this; }
 
     /** @return Collection<int, ProjectStageStatus> */
     public function getStageStatuses(): Collection { return $this->stageStatuses; }
