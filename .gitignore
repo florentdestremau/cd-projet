@@ -29,3 +29,7 @@ tests/e2e
 playwright-report/
 test-results/
 ###< e2e ###
+
+# Test SQLite databases (per worker)
+/var/data_test*.db
+
