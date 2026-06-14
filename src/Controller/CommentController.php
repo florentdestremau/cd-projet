@@ -9,7 +9,9 @@ use App\Entity\Comment;
 use App\Entity\Project;
 use App\Entity\User;
 use App\Repository\ProjectRepository;
+use App\Service\ActivityPublisher;
 use App\Service\MentionParser;
+use App\Service\WebPushSender;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -25,6 +27,8 @@ final class CommentController extends AbstractController
         ProjectRepository $projectRepository,
         MentionParser $mentionParser,
         EntityManagerInterface $em,
+        ActivityPublisher $activityPublisher,
+        WebPushSender $webPushSender,
     ): Response {
         $project = $projectRepository->findOneBy(['reference' => $reference]);
         if (!$project instanceof Project) {
@@ -61,6 +65,16 @@ final class CommentController extends AbstractController
         $em->persist($activity);
 
         $em->flush();
+
+        $activityPublisher->publishComment($comment);
+        foreach ($comment->getMentions() as $mentioned) {
+            $webPushSender->notify(
+                $mentioned,
+                sprintf('%s vous mentionne', $user->getFirstName()),
+                mb_substr($body, 0, 180),
+                $this->generateUrl('app_projects_show', ['reference' => $project->getReference()]),
+            );
+        }
 
         return $this->redirectToRoute('app_projects_show', ['reference' => $reference], Response::HTTP_SEE_OTHER);
     }

@@ -42,23 +42,14 @@
     <div class="grid-2" style="grid-template-columns: 1.5fr 1fr; align-items: start;">
         <section class="stack">
             <h2>Fil de discussion</h2>
-            {% for comment in comments %}
-                <article class="card" style="padding: var(--space-4) var(--space-5);">
-                    <header style="display: flex; align-items: baseline; gap: var(--space-3); margin-bottom: var(--space-2);">
-                        <strong>{{ comment.author.fullName }}</strong>
-                        <span class="text-xs text-muted">{{ comment.createdAt|format_datetime('short', 'short', locale='fr') }}</span>
-                        {% if comment.mentions|length > 0 %}
-                            <span class="text-xs text-soft">
-                                ↪ mentionne
-                                {% for m in comment.mentions %}<strong>@{{ m.firstName }}</strong>{% if not loop.last %}, {% endif %}{% endfor %}
-                            </span>
-                        {% endif %}
-                    </header>
-                    <p>{{ comment.body }}</p>
-                </article>
-            {% else %}
-                <p class="text-muted">Aucun message pour le moment.</p>
-            {% endfor %}
+            {{ turbo_stream_from(['project/' ~ project.id]) }}
+            <div id="project-comments" class="stack">
+                {% for comment in comments %}
+                    {% include 'project/_comment.html.twig' with {comment: comment} %}
+                {% else %}
+                    <p class="text-muted">Aucun message pour le moment.</p>
+                {% endfor %}
+            </div>
 
             <form method="post" action="{{ path('app_comments_create', {reference: project.reference}) }}"
                   class="card"

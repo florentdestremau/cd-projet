@@ -1,0 +1,44 @@
+{% extends 'base.html.twig' %}
+{% block title %}Kanban{% endblock %}
+
+{% block body %}
+    <div class="page__header">
+        <div>
+            <h1 class="page__title">Kanban</h1>
+            <p class="page__subtitle">Glissez les projets entre étapes pour mettre à jour leur statut.</p>
+        </div>
+        <div class="page__actions">
+            <a href="{{ path('app_projects_index') }}" class="btn btn--secondary">Liste ↕</a>
+        </div>
+    </div>
+
+    <div data-controller="kanban" class="kanban">
+        {% for col in columns %}
+            <div class="kanban__column"
+                 data-kanban-target="column"
+                 data-stage="{{ col.stage.value }}">
+                <header class="kanban__column-header">
+                    <span>{{ col.stage.label }}</span>
+                    <span class="text-xs text-muted">{{ col.projects|length }}</span>
+                </header>
+                <div class="kanban__cards" data-kanban-target="dropzone">
+                    {% for project in col.projects %}
+                        <a href="{{ path('app_projects_show', {reference: project.reference}) }}"
+                           class="kanban__card"
+                           draggable="true"
+                           data-kanban-target="card"
+                           data-reference="{{ project.reference }}"
+                           data-csrf="{{ csrf_token('stage_' ~ project.id) }}">
+                            <span class="kanban__card-ref">{{ project.reference }}</span>
+                            <strong>{{ project.title|u.truncate(48, '…') }}</strong>
+                            <span class="text-xs text-soft">{{ project.client.displayName|u.truncate(28, '…') }}</span>
+                            {% if project.targetDeliveryDate %}
+                                <span class="text-xs text-muted">{{ project.targetDeliveryDate|format_date('short', locale='fr') }}</span>
+                            {% endif %}
+                        </a>
+                    {% endfor %}
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+{% endblock %}

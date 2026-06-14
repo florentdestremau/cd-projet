@@ -1,0 +1,27 @@
+{% extends 'base.html.twig' %}
+{% block title %}Notifications{% endblock %}
+
+{% block body %}
+    <div class="page__header">
+        <div>
+            <h1 class="page__title">Notifications</h1>
+            <p class="page__subtitle">Recevez une notification navigateur lorsque quelqu'un vous mentionne.</p>
+        </div>
+    </div>
+
+    <article class="card stack"
+             data-controller="push"
+             data-push-vapid-key-value="{{ vapid_public_key }}"
+             data-push-subscribe-url-value="{{ path('app_push_subscribe') }}"
+             data-push-unsubscribe-url-value="{{ path('app_push_unsubscribe') }}">
+        <h3 class="card__title">Notifications navigateur</h3>
+        <p data-push-target="status" class="text-soft">Statut : vérification…</p>
+        <div style="display: flex; gap: var(--space-3); margin-top: var(--space-4);">
+            <button type="button" class="btn btn--primary" data-action="push#enable" data-push-target="enable" hidden>Activer</button>
+            <button type="button" class="btn btn--secondary" data-action="push#disable" data-push-target="disable" hidden>Désactiver</button>
+        </div>
+        <p class="text-xs text-muted" style="margin-top: var(--space-4);">
+            {{ subscriptions|length }} abonnement{{ subscriptions|length > 1 ? 's' }} actif{{ subscriptions|length > 1 ? 's' }}.
+        </p>
+    </article>
+{% endblock %}

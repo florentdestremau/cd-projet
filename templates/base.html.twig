@@ -45,6 +45,12 @@
                     <a href="#" class="sidebar__link">
                         {{ ux_icon('lucide:package') }} Catalogues
                     </a>
+                    <a href="{{ path('app_projects_kanban') }}" class="sidebar__link {{ app.request.attributes.get('_route') == 'app_projects_kanban' ? 'sidebar__link--active' }}">
+                        {{ ux_icon('lucide:columns-3') }} Kanban
+                    </a>
+                    <a href="{{ path('app_notifications_prefs') }}" class="sidebar__link {{ app.request.attributes.get('_route') == 'app_notifications_prefs' ? 'sidebar__link--active' }}">
+                        {{ ux_icon('lucide:bell') }} Notifications
+                    </a>
                 </nav>
             </aside>
 
