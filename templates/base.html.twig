@@ -42,11 +42,14 @@
                     <a href="{{ path('app_finances_dashboard') }}" class="sidebar__link {{ app.request.attributes.get('_route') starts with 'app_finances' ? 'sidebar__link--active' }}">
                         {{ ux_icon('lucide:receipt') }} Finances
                     </a>
-                    <a href="#" class="sidebar__link">
+                    <a href="{{ path('app_catalogues_index') }}" class="sidebar__link {{ app.request.attributes.get('_route') starts with 'app_catalogues' ? 'sidebar__link--active' }}">
                         {{ ux_icon('lucide:package') }} Catalogues
                     </a>
                     <a href="{{ path('app_projects_kanban') }}" class="sidebar__link {{ app.request.attributes.get('_route') == 'app_projects_kanban' ? 'sidebar__link--active' }}">
                         {{ ux_icon('lucide:columns-3') }} Kanban
+                    </a>
+                    <a href="{{ path('app_projects_calendar') }}" class="sidebar__link {{ app.request.attributes.get('_route') == 'app_projects_calendar' ? 'sidebar__link--active' }}">
+                        {{ ux_icon('lucide:calendar') }} Calendrier
                     </a>
                     <a href="{{ path('app_notifications_prefs') }}" class="sidebar__link {{ app.request.attributes.get('_route') == 'app_notifications_prefs' ? 'sidebar__link--active' }}">
                         {{ ux_icon('lucide:bell') }} Notifications

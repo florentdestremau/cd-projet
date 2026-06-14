@@ -1,0 +1,140 @@
+{% extends 'base.html.twig' %}
+{% block title %}Catalogues{% endblock %}
+{% block body %}
+    <div class="page__header">
+        <div>
+            <h1 class="page__title">Catalogues</h1>
+            <p class="page__subtitle">Matières, pierres et fournisseurs.</p>
+        </div>
+    </div>
+
+    <div class="stack stack--lg">
+
+        <section>
+            <h2>Matières ({{ materials|length }})</h2>
+            <article class="card" style="margin-top: var(--space-3);">
+                {% if materials|length > 0 %}
+                    <table style="width: 100%; border-collapse: collapse;">
+                        <thead><tr style="border-bottom: 1px solid var(--color-line);">
+                            <th style="text-align: left; padding: var(--space-2);">Type</th>
+                            <th style="text-align: left; padding: var(--space-2);">Nom</th>
+                            <th style="text-align: right; padding: var(--space-2);">€ / g</th>
+                            <th style="text-align: left; padding: var(--space-2);">Fournisseur</th>
+                        </tr></thead>
+                        <tbody>
+                        {% for m in materials %}
+                            <tr style="border-bottom: 1px solid var(--color-line);">
+                                <td style="padding: var(--space-2);">{{ m.type.label }}</td>
+                                <td style="padding: var(--space-2);">{{ m.name }}</td>
+                                <td style="padding: var(--space-2); text-align: right; font-variant-numeric: tabular-nums;">{{ (m.pricePerGram / 100)|format_currency('EUR', locale='fr') }}</td>
+                                <td style="padding: var(--space-2);" class="text-soft">{{ m.supplier ? m.supplier.name : '—' }}</td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                {% endif %}
+                <details style="margin-top: var(--space-4);">
+                    <summary class="text-sm text-muted" style="cursor: pointer;">+ Ajouter une matière</summary>
+                    <form method="post" action="{{ path('app_catalogues_material_create') }}" class="grid-3" style="margin-top: var(--space-3); gap: var(--space-3);">
+                        <input type="hidden" name="_token" value="{{ csrf_token('catalogue_material') }}">
+                        <input type="text" name="name" placeholder="Nom" required style="padding: var(--space-2); border: 1px solid var(--color-line); border-radius: var(--radius-sm);">
+                        <select name="type" style="padding: var(--space-2); border: 1px solid var(--color-line); border-radius: var(--radius-sm);">
+                            {% for t in material_types %}<option value="{{ t.value }}">{{ t.label }}</option>{% endfor %}
+                        </select>
+                        <input type="number" step="0.01" name="pricePerGram" placeholder="€/g" required style="padding: var(--space-2); border: 1px solid var(--color-line); border-radius: var(--radius-sm);">
+                        <select name="supplier" style="padding: var(--space-2); border: 1px solid var(--color-line); border-radius: var(--radius-sm);">
+                            <option value="">— Fournisseur —</option>
+                            {% for s in suppliers %}<option value="{{ s.id }}">{{ s.name }}</option>{% endfor %}
+                        </select>
+                        <button type="submit" class="btn btn--secondary" style="grid-column: span 2;">Ajouter</button>
+                    </form>
+                </details>
+            </article>
+        </section>
+
+        <section>
+            <h2>Pierres ({{ stones|length }})</h2>
+            <article class="card" style="margin-top: var(--space-3);">
+                {% if stones|length > 0 %}
+                    <table style="width: 100%; border-collapse: collapse;">
+                        <thead><tr style="border-bottom: 1px solid var(--color-line);">
+                            <th style="text-align: left; padding: var(--space-2);">Type</th>
+                            <th style="text-align: right; padding: var(--space-2);">Carats</th>
+                            <th style="text-align: left; padding: var(--space-2);">Qualité</th>
+                            <th style="text-align: left; padding: var(--space-2);">Couleur</th>
+                            <th style="text-align: right; padding: var(--space-2);">Coût</th>
+                            <th style="text-align: left; padding: var(--space-2);">Fournisseur</th>
+                        </tr></thead>
+                        <tbody>
+                        {% for s in stones %}
+                            <tr style="border-bottom: 1px solid var(--color-line);">
+                                <td style="padding: var(--space-2);">{{ s.type.label }}</td>
+                                <td style="padding: var(--space-2); text-align: right; font-variant-numeric: tabular-nums;">{{ s.carats|number_format(3, ',', ' ') }}</td>
+                                <td style="padding: var(--space-2);" class="text-soft">{{ s.quality ?? '—' }}</td>
+                                <td style="padding: var(--space-2);" class="text-soft">{{ s.color ?? '—' }}</td>
+                                <td style="padding: var(--space-2); text-align: right; font-variant-numeric: tabular-nums;">{{ (s.costPrice / 100)|format_currency('EUR', locale='fr') }}</td>
+                                <td style="padding: var(--space-2);" class="text-soft">{{ s.supplier ? s.supplier.name : '—' }}</td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                {% endif %}
+                <details style="margin-top: var(--space-4);">
+                    <summary class="text-sm text-muted" style="cursor: pointer;">+ Ajouter une pierre</summary>
+                    <form method="post" action="{{ path('app_catalogues_stone_create') }}" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--space-3); margin-top: var(--space-3);">
+                        <input type="hidden" name="_token" value="{{ csrf_token('catalogue_stone') }}">
+                        <select name="type" style="padding: var(--space-2); border: 1px solid var(--color-line); border-radius: var(--radius-sm);">
+                            {% for t in stone_types %}<option value="{{ t.value }}">{{ t.label }}</option>{% endfor %}
+                        </select>
+                        <input type="number" step="0.001" name="carats" placeholder="Carats" required style="padding: var(--space-2); border: 1px solid var(--color-line); border-radius: var(--radius-sm);">
+                        <input type="text" name="quality" placeholder="Qualité (ex: VVS1)" style="padding: var(--space-2); border: 1px solid var(--color-line); border-radius: var(--radius-sm);">
+                        <input type="text" name="color" placeholder="Couleur (ex: D, bleu Ceylan)" style="padding: var(--space-2); border: 1px solid var(--color-line); border-radius: var(--radius-sm);">
+                        <input type="number" step="0.01" name="cost" placeholder="Coût €" required style="padding: var(--space-2); border: 1px solid var(--color-line); border-radius: var(--radius-sm);">
+                        <select name="supplier" style="padding: var(--space-2); border: 1px solid var(--color-line); border-radius: var(--radius-sm);">
+                            <option value="">— Fournisseur —</option>
+                            {% for s in suppliers %}<option value="{{ s.id }}">{{ s.name }}</option>{% endfor %}
+                        </select>
+                        <button type="submit" class="btn btn--secondary" style="grid-column: span 3;">Ajouter</button>
+                    </form>
+                </details>
+            </article>
+        </section>
+
+        <section>
+            <h2>Fournisseurs ({{ suppliers|length }})</h2>
+            <article class="card" style="margin-top: var(--space-3);">
+                {% if suppliers|length > 0 %}
+                    <table style="width: 100%; border-collapse: collapse;">
+                        <thead><tr style="border-bottom: 1px solid var(--color-line);">
+                            <th style="text-align: left; padding: var(--space-2);">Nom</th>
+                            <th style="text-align: left; padding: var(--space-2);">Spécialité</th>
+                            <th style="text-align: left; padding: var(--space-2);">Contact</th>
+                        </tr></thead>
+                        <tbody>
+                        {% for s in suppliers %}
+                            <tr style="border-bottom: 1px solid var(--color-line);">
+                                <td style="padding: var(--space-2);">{{ s.name }}</td>
+                                <td style="padding: var(--space-2);">{{ s.specialty.label }}</td>
+                                <td style="padding: var(--space-2);" class="text-soft text-sm">{{ s.contactEmail }}{% if s.contactPhone %} · {{ s.contactPhone }}{% endif %}</td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                {% endif %}
+                <details style="margin-top: var(--space-4);">
+                    <summary class="text-sm text-muted" style="cursor: pointer;">+ Ajouter un fournisseur</summary>
+                    <form method="post" action="{{ path('app_catalogues_supplier_create') }}" style="display: grid; grid-template-columns: repeat(2, 1fr); gap: var(--space-3); margin-top: var(--space-3);">
+                        <input type="hidden" name="_token" value="{{ csrf_token('catalogue_supplier') }}">
+                        <input type="text" name="name" placeholder="Nom" required style="padding: var(--space-2); border: 1px solid var(--color-line); border-radius: var(--radius-sm);">
+                        <select name="specialty" style="padding: var(--space-2); border: 1px solid var(--color-line); border-radius: var(--radius-sm);">
+                            {% for sp in supplier_specialties %}<option value="{{ sp.value }}">{{ sp.label }}</option>{% endfor %}
+                        </select>
+                        <input type="email" name="contactEmail" placeholder="Email" style="padding: var(--space-2); border: 1px solid var(--color-line); border-radius: var(--radius-sm);">
+                        <input type="text" name="contactPhone" placeholder="Téléphone" style="padding: var(--space-2); border: 1px solid var(--color-line); border-radius: var(--radius-sm);">
+                        <button type="submit" class="btn btn--secondary" style="grid-column: span 2;">Ajouter</button>
+                    </form>
+                </details>
+            </article>
+        </section>
+    </div>
+{% endblock %}

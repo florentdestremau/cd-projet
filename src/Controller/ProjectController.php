@@ -64,6 +64,7 @@ final class ProjectController extends AbstractController
         \App\Repository\QuoteRepository $quoteRepository,
         \App\Repository\InvoiceRepository $invoiceRepository,
         \App\Repository\ExpenseRepository $expenseRepository,
+        \App\Repository\DocumentRepository $documentRepository,
     ): Response {
         $project = $repository->findOneBy(['reference' => $reference]);
         if (!$project instanceof Project) {
@@ -85,6 +86,7 @@ final class ProjectController extends AbstractController
         $expenses = $expenseRepository->findBy(['project' => $project], ['occurredAt' => 'DESC']);
         $expensesTotal = $expenseRepository->totalForProject($project);
         $margin = $project->getSellingPrice() - $expensesTotal;
+        $documents = $documentRepository->findBy(['project' => $project], ['uploadedAt' => 'DESC']);
 
         return $this->render('project/show.html.twig', [
             'project' => $project,
@@ -97,6 +99,8 @@ final class ProjectController extends AbstractController
             'expenses_total' => $expensesTotal,
             'margin' => $margin,
             'expense_categories' => \App\Enum\ExpenseCategory::cases(),
+            'documents' => $documents,
+            'document_categories' => \App\Enum\DocumentCategory::cases(),
         ]);
     }
 }

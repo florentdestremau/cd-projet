@@ -44,8 +44,79 @@ final class AppFixtures extends Fixture
 
         $manager->flush();
 
+        $this->createCatalogues($manager);
+        $manager->flush();
+
         $this->createFinanceData($manager);
         $manager->flush();
+    }
+
+    private function createCatalogues(ObjectManager $manager): void
+    {
+        $suppliers = [];
+        foreach ([
+            ['Pierres d\'Anvers', \App\Enum\SupplierSpecialty::STONES],
+            ['Genève Gem & Co', \App\Enum\SupplierSpecialty::STONES],
+            ['Paris Diamantaire', \App\Enum\SupplierSpecialty::STONES],
+            ['Aurélien Métaux', \App\Enum\SupplierSpecialty::METALS],
+            ['Maison Bricard - Or fin', \App\Enum\SupplierSpecialty::METALS],
+            ['Fonte Castel', \App\Enum\SupplierSpecialty::CASTING],
+            ['Sertis Maître Loïc', \App\Enum\SupplierSpecialty::SETTING],
+            ['Écrins de Sèvres', \App\Enum\SupplierSpecialty::OTHER],
+        ] as [$name, $spec]) {
+            $s = new \App\Entity\Supplier();
+            $s->setName($name);
+            $s->setSpecialty($spec);
+            $s->setContactEmail($this->faker->companyEmail());
+            $s->setContactPhone($this->faker->phoneNumber());
+            $manager->persist($s);
+            $suppliers[$spec->value][] = $s;
+        }
+
+        $metalSuppliers = $suppliers['metals'] ?? [];
+        foreach ([
+            ['Or 18k jaune', \App\Enum\MaterialType::GOLD_18K, 6500],
+            ['Or 18k blanc', \App\Enum\MaterialType::GOLD_18K, 6700],
+            ['Or 18k rose', \App\Enum\MaterialType::GOLD_18K, 6500],
+            ['Or 14k jaune', \App\Enum\MaterialType::GOLD_14K, 5100],
+            ['Or 14k blanc', \App\Enum\MaterialType::GOLD_14K, 5200],
+            ['Platine 950', \App\Enum\MaterialType::PLATINUM, 3300],
+            ['Palladium 950', \App\Enum\MaterialType::PALLADIUM, 2400],
+            ['Argent 925', \App\Enum\MaterialType::SILVER, 110],
+        ] as [$name, $type, $price]) {
+            $m = new \App\Entity\Material();
+            $m->setName($name);
+            $m->setType($type);
+            $m->setPricePerGram($price);
+            if ($metalSuppliers !== []) {
+                $m->setSupplier($this->faker->randomElement($metalSuppliers));
+            }
+            $manager->persist($m);
+        }
+
+        $stoneSuppliers = $suppliers['stones'] ?? [];
+        $stoneDefs = [
+            [\App\Enum\StoneType::DIAMOND, [250, 500, 750, 1000, 1500, 2000], ['VVS1', 'VS1', 'SI1'], ['D', 'E', 'F', 'G']],
+            [\App\Enum\StoneType::SAPPHIRE, [500, 1000, 1500, 2000], [null], ['Bleu Ceylan', 'Bleu royal', 'Padparadscha', 'Rose']],
+            [\App\Enum\StoneType::RUBY, [500, 1000, 1500], [null], ['Birmanie', 'Mozambique']],
+            [\App\Enum\StoneType::EMERALD, [500, 1000, 2000], [null], ['Colombie', 'Zambie']],
+        ];
+        foreach ($stoneDefs as [$type, $carats, $qualities, $colors]) {
+            foreach ($carats as $c) {
+                foreach ($colors as $col) {
+                    $s = new \App\Entity\Stone();
+                    $s->setType($type);
+                    $s->setCaratWeight($c);
+                    $s->setQuality($this->faker->randomElement($qualities));
+                    $s->setColor($col);
+                    $s->setCostPrice(($c * 35 + ($type === \App\Enum\StoneType::DIAMOND ? 800 : 200)) * 100);
+                    if ($stoneSuppliers !== []) {
+                        $s->setSupplier($this->faker->randomElement($stoneSuppliers));
+                    }
+                    $manager->persist($s);
+                }
+            }
+        }
     }
 
     private function createFinanceData(ObjectManager $manager): void

@@ -1,0 +1,39 @@
+{% extends 'base.html.twig' %}
+{% block title %}Calendrier{% endblock %}
+{% block body %}
+    <div class="page__header">
+        <div>
+            <h1 class="page__title">{{ cursor|format_date('long', locale='fr')|capitalize }}</h1>
+            <p class="page__subtitle">Échéances de livraison des projets actifs.</p>
+        </div>
+        <div class="page__actions">
+            <a href="?m={{ prev }}" class="btn btn--ghost">{{ ux_icon('lucide:chevron-left') }} Précédent</a>
+            <a href="?m={{ 'now'|date('Y-m') }}" class="btn btn--secondary">Aujourd'hui</a>
+            <a href="?m={{ next }}" class="btn btn--ghost">Suivant {{ ux_icon('lucide:chevron-right') }}</a>
+        </div>
+    </div>
+
+    <div class="calendar">
+        <div class="calendar__head">
+            {% for d in ['Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam', 'Dim'] %}
+                <div>{{ d }}</div>
+            {% endfor %}
+        </div>
+        <div class="calendar__grid">
+            {% for i in 1..first_dow %}
+                <div class="calendar__day calendar__day--empty"></div>
+            {% endfor %}
+            {% for day in 1..days_in_month %}
+                <div class="calendar__day">
+                    <div class="calendar__day-num">{{ day }}</div>
+                    {% for p in by_day[day] ?? [] %}
+                        <a href="{{ path('app_projects_show', {reference: p.reference}) }}" class="calendar__event">
+                            <strong>{{ p.reference }}</strong>
+                            <span class="text-xs text-soft">{{ p.client.displayName|u.truncate(20, '…') }}</span>
+                        </a>
+                    {% endfor %}
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+{% endblock %}

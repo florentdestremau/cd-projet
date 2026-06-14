@@ -1,0 +1,37 @@
+.calendar { display: flex; flex-direction: column; gap: var(--space-2); }
+.calendar__head, .calendar__grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: var(--space-2);
+}
+.calendar__head > div {
+    text-align: center;
+    font-family: var(--font-serif);
+    font-style: italic;
+    color: var(--color-ink-muted);
+    padding: var(--space-2);
+}
+.calendar__day {
+    background-color: var(--color-paper);
+    border: 1px solid var(--color-line);
+    border-radius: var(--radius-sm);
+    padding: var(--space-2);
+    min-height: 110px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+.calendar__day--empty { background: transparent; border-color: transparent; }
+.calendar__day-num { font-size: var(--text-sm); color: var(--color-ink-muted); font-variant-numeric: tabular-nums; }
+.calendar__event {
+    display: flex;
+    flex-direction: column;
+    padding: 4px 6px;
+    background-color: color-mix(in srgb, var(--color-gold) 12%, var(--color-paper));
+    border-left: 2px solid var(--color-gold);
+    border-radius: 2px;
+    font-size: var(--text-xs);
+    color: var(--color-ink);
+    transition: background-color var(--transition-base);
+}
+.calendar__event:hover { background-color: color-mix(in srgb, var(--color-gold) 22%, var(--color-paper)); color: var(--color-ink); }
