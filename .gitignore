@@ -23,3 +23,9 @@
 /.php-cs-fixer.php
 /.php-cs-fixer.cache
 ###< friendsofphp/php-cs-fixer ###
+
+###> e2e (ad-hoc, hors repo) ###
+tests/e2e
+playwright-report/
+test-results/
+###< e2e ###

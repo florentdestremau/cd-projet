@@ -22,7 +22,7 @@
             {% endif %}
 
             <form method="post" class="stack">
-                <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
+                <input type="hidden" name="_csrf_token" data-controller="csrf-protection" value="{{ csrf_token('authenticate') }}">
 
                 <div>
                     <label for="email" class="text-xs text-muted" style="display: block; letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: var(--space-2);">Adresse e-mail</label>

@@ -33,7 +33,7 @@
                     <a href="{{ path('app_home') }}" class="sidebar__link sidebar__link--active">
                         {{ ux_icon('lucide:layout-dashboard') }} Tableau de bord
                     </a>
-                    <a href="{{ path('app_projects_index') }}" class="sidebar__link {{ app.request.get('_route') starts with 'app_projects' ? 'sidebar__link--active' }}">
+                    <a href="{{ path('app_projects_index') }}" class="sidebar__link {{ app.request.attributes.get('_route') starts with 'app_projects' ? 'sidebar__link--active' }}">
                         {{ ux_icon('lucide:gem') }} Projets
                     </a>
                     <a href="#" class="sidebar__link">
