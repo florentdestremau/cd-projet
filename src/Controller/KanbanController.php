@@ -1,7 +1,5 @@
 <?php
 
-declare(strict_types=1);
-
 namespace App\Controller;
 
 use App\Entity\ActivityLog;
@@ -35,7 +33,7 @@ final class KanbanController extends AbstractController
                 'stage' => $stage,
                 'projects' => array_values(array_filter(
                     $projects,
-                    fn (Project $p) => $p->getCurrentStage() === $stage,
+                    static fn (Project $p): bool => $p->getCurrentStage() === $stage,
                 )),
             ];
         }
@@ -46,7 +44,7 @@ final class KanbanController extends AbstractController
         ]);
     }
 
-    #[Route('/api/projets/{reference}/etape', name: 'app_projects_change_stage', methods: ['POST'], requirements: ['reference' => 'BAG-\d+-\d+'])]
+    #[Route('/api/projets/{reference}/etape', name: 'app_projects_change_stage', requirements: ['reference' => 'BAG-\d+-\d+'], methods: ['POST'])]
     public function changeStage(
         string $reference,
         Request $request,
@@ -61,9 +59,9 @@ final class KanbanController extends AbstractController
             return new JsonResponse(['error' => 'csrf'], 403);
         }
 
-        $payload = json_decode($request->getContent(), true, flags: JSON_THROW_ON_ERROR);
+        $payload = json_decode($request->getContent(), true, flags: \JSON_THROW_ON_ERROR);
         $stage = ProjectStage::tryFrom($payload['stage'] ?? '');
-        if ($stage === null) {
+        if (null === $stage) {
             return new JsonResponse(['error' => 'invalid_stage'], 400);
         }
 
@@ -75,10 +73,10 @@ final class KanbanController extends AbstractController
         // Marquer les étapes précédentes comme complétées si on avance
         $now = new \DateTimeImmutable();
         foreach ($project->getStageStatuses() as $status) {
-            if ($status->getStage()->position() < $stage->position() && $status->getCompletedAt() === null) {
+            if ($status->getStage()->position() < $stage->position() && null === $status->getCompletedAt()) {
                 $status->setCompletedAt($now);
             }
-            if ($status->getStage() === $stage && $status->getStartedAt() === null) {
+            if ($status->getStage() === $stage && null === $status->getStartedAt()) {
                 $status->setStartedAt($now);
             }
         }

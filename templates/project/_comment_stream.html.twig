@@ -1,5 +1,5 @@
 <turbo-stream action="append" target="project-comments">
     <template>
-        {% include 'project/_comment.html.twig' with {comment: comment} %}
+        {{ include('project/_comment.html.twig', {comment: comment}) }}
     </template>
 </turbo-stream>

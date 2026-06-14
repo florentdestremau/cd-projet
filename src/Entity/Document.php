@@ -1,5 +1,5 @@
 <?php
-declare(strict_types=1);
+
 namespace App\Entity;
 
 use App\Enum\DocumentCategory;
@@ -46,22 +46,102 @@ class Document
         $this->uploadedAt = new \DateTimeImmutable();
     }
 
-    public function getId(): ?int { return $this->id; }
-    public function getProject(): ?Project { return $this->project; }
-    public function setProject(?Project $p): self { $this->project = $p; return $this; }
-    public function getFilename(): string { return $this->filename; }
-    public function setFilename(string $n): self { $this->filename = $n; return $this; }
-    public function getStoragePath(): string { return $this->storagePath; }
-    public function setStoragePath(string $p): self { $this->storagePath = $p; return $this; }
-    public function getMimeType(): string { return $this->mimeType; }
-    public function setMimeType(string $m): self { $this->mimeType = $m; return $this; }
-    public function getSize(): int { return $this->size; }
-    public function setSize(int $s): self { $this->size = $s; return $this; }
-    public function getCategory(): DocumentCategory { return $this->category; }
-    public function setCategory(DocumentCategory $c): self { $this->category = $c; return $this; }
-    public function getUploadedBy(): ?User { return $this->uploadedBy; }
-    public function setUploadedBy(?User $u): self { $this->uploadedBy = $u; return $this; }
-    public function getUploadedAt(): \DateTimeImmutable { return $this->uploadedAt; }
+    public function getId(): ?int
+    {
+        return $this->id;
+    }
 
-    public function isImage(): bool { return str_starts_with($this->mimeType, 'image/'); }
+    public function getProject(): ?Project
+    {
+        return $this->project;
+    }
+
+    public function setProject(?Project $p): self
+    {
+        $this->project = $p;
+
+        return $this;
+    }
+
+    public function getFilename(): string
+    {
+        return $this->filename;
+    }
+
+    public function setFilename(string $n): self
+    {
+        $this->filename = $n;
+
+        return $this;
+    }
+
+    public function getStoragePath(): string
+    {
+        return $this->storagePath;
+    }
+
+    public function setStoragePath(string $p): self
+    {
+        $this->storagePath = $p;
+
+        return $this;
+    }
+
+    public function getMimeType(): string
+    {
+        return $this->mimeType;
+    }
+
+    public function setMimeType(string $m): self
+    {
+        $this->mimeType = $m;
+
+        return $this;
+    }
+
+    public function getSize(): int
+    {
+        return $this->size;
+    }
+
+    public function setSize(int $s): self
+    {
+        $this->size = $s;
+
+        return $this;
+    }
+
+    public function getCategory(): DocumentCategory
+    {
+        return $this->category;
+    }
+
+    public function setCategory(DocumentCategory $c): self
+    {
+        $this->category = $c;
+
+        return $this;
+    }
+
+    public function getUploadedBy(): ?User
+    {
+        return $this->uploadedBy;
+    }
+
+    public function setUploadedBy(?User $u): self
+    {
+        $this->uploadedBy = $u;
+
+        return $this;
+    }
+
+    public function getUploadedAt(): \DateTimeImmutable
+    {
+        return $this->uploadedAt;
+    }
+
+    public function isImage(): bool
+    {
+        return str_starts_with($this->mimeType, 'image/');
+    }
 }

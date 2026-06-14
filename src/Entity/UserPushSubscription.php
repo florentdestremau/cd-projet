@@ -1,7 +1,5 @@
 <?php
 
-declare(strict_types=1);
-
 namespace App\Entity;
 
 use App\Repository\UserPushSubscriptionRepository;
@@ -38,14 +36,61 @@ class UserPushSubscription
         $this->createdAt = new \DateTimeImmutable();
     }
 
-    public function getId(): ?int { return $this->id; }
-    public function getUser(): ?User { return $this->user; }
-    public function setUser(?User $user): self { $this->user = $user; return $this; }
-    public function getEndpoint(): string { return $this->endpoint; }
-    public function setEndpoint(string $endpoint): self { $this->endpoint = $endpoint; return $this; }
-    public function getP256dhKey(): string { return $this->p256dhKey; }
-    public function setP256dhKey(string $key): self { $this->p256dhKey = $key; return $this; }
-    public function getAuthToken(): string { return $this->authToken; }
-    public function setAuthToken(string $token): self { $this->authToken = $token; return $this; }
-    public function getCreatedAt(): \DateTimeImmutable { return $this->createdAt; }
+    public function getId(): ?int
+    {
+        return $this->id;
+    }
+
+    public function getUser(): ?User
+    {
+        return $this->user;
+    }
+
+    public function setUser(?User $user): self
+    {
+        $this->user = $user;
+
+        return $this;
+    }
+
+    public function getEndpoint(): string
+    {
+        return $this->endpoint;
+    }
+
+    public function setEndpoint(string $endpoint): self
+    {
+        $this->endpoint = $endpoint;
+
+        return $this;
+    }
+
+    public function getP256dhKey(): string
+    {
+        return $this->p256dhKey;
+    }
+
+    public function setP256dhKey(string $key): self
+    {
+        $this->p256dhKey = $key;
+
+        return $this;
+    }
+
+    public function getAuthToken(): string
+    {
+        return $this->authToken;
+    }
+
+    public function setAuthToken(string $token): self
+    {
+        $this->authToken = $token;
+
+        return $this;
+    }
+
+    public function getCreatedAt(): \DateTimeImmutable
+    {
+        return $this->createdAt;
+    }
 }

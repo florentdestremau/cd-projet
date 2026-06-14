@@ -1,7 +1,5 @@
 <?php
 
-declare(strict_types=1);
-
 namespace App\Entity;
 
 use App\Enum\InvoiceStatus;
@@ -67,52 +65,159 @@ class Invoice
         $this->payments = new ArrayCollection();
     }
 
-    public function getId(): ?int { return $this->id; }
-    public function getReference(): string { return $this->reference; }
-    public function setReference(string $r): self { $this->reference = $r; return $this; }
-    public function getProject(): ?Project { return $this->project; }
-    public function setProject(?Project $p): self { $this->project = $p; return $this; }
-    public function getQuote(): ?Quote { return $this->quote; }
-    public function setQuote(?Quote $q): self { $this->quote = $q; return $this; }
-    public function getStatus(): InvoiceStatus { return $this->status; }
-    public function setStatus(InvoiceStatus $s): self { $this->status = $s; return $this; }
-    public function getVatRate(): int { return $this->vatRate; }
-    public function setVatRate(int $r): self { $this->vatRate = $r; return $this; }
-    public function getDueDate(): ?\DateTimeImmutable { return $this->dueDate; }
-    public function setDueDate(?\DateTimeImmutable $d): self { $this->dueDate = $d; return $this; }
-    public function getSentAt(): ?\DateTimeImmutable { return $this->sentAt; }
-    public function setSentAt(?\DateTimeImmutable $d): self { $this->sentAt = $d; return $this; }
-    public function getPaidAt(): ?\DateTimeImmutable { return $this->paidAt; }
-    public function setPaidAt(?\DateTimeImmutable $d): self { $this->paidAt = $d; return $this; }
-    public function getPdfPath(): ?string { return $this->pdfPath; }
-    public function setPdfPath(?string $p): self { $this->pdfPath = $p; return $this; }
-    public function getCreatedAt(): \DateTimeImmutable { return $this->createdAt; }
+    public function getId(): ?int
+    {
+        return $this->id;
+    }
+
+    public function getReference(): string
+    {
+        return $this->reference;
+    }
+
+    public function setReference(string $r): self
+    {
+        $this->reference = $r;
+
+        return $this;
+    }
+
+    public function getProject(): ?Project
+    {
+        return $this->project;
+    }
+
+    public function setProject(?Project $p): self
+    {
+        $this->project = $p;
+
+        return $this;
+    }
+
+    public function getQuote(): ?Quote
+    {
+        return $this->quote;
+    }
+
+    public function setQuote(?Quote $q): self
+    {
+        $this->quote = $q;
+
+        return $this;
+    }
+
+    public function getStatus(): InvoiceStatus
+    {
+        return $this->status;
+    }
+
+    public function setStatus(InvoiceStatus $s): self
+    {
+        $this->status = $s;
+
+        return $this;
+    }
+
+    public function getVatRate(): int
+    {
+        return $this->vatRate;
+    }
+
+    public function setVatRate(int $r): self
+    {
+        $this->vatRate = $r;
+
+        return $this;
+    }
+
+    public function getDueDate(): ?\DateTimeImmutable
+    {
+        return $this->dueDate;
+    }
+
+    public function setDueDate(?\DateTimeImmutable $d): self
+    {
+        $this->dueDate = $d;
+
+        return $this;
+    }
+
+    public function getSentAt(): ?\DateTimeImmutable
+    {
+        return $this->sentAt;
+    }
+
+    public function setSentAt(?\DateTimeImmutable $d): self
+    {
+        $this->sentAt = $d;
+
+        return $this;
+    }
+
+    public function getPaidAt(): ?\DateTimeImmutable
+    {
+        return $this->paidAt;
+    }
+
+    public function setPaidAt(?\DateTimeImmutable $d): self
+    {
+        $this->paidAt = $d;
+
+        return $this;
+    }
+
+    public function getPdfPath(): ?string
+    {
+        return $this->pdfPath;
+    }
+
+    public function setPdfPath(?string $p): self
+    {
+        $this->pdfPath = $p;
+
+        return $this;
+    }
+
+    public function getCreatedAt(): \DateTimeImmutable
+    {
+        return $this->createdAt;
+    }
 
     /** @return Collection<int, InvoiceItem> */
-    public function getItems(): Collection { return $this->items; }
+    public function getItems(): Collection
+    {
+        return $this->items;
+    }
+
     public function addItem(InvoiceItem $i): self
     {
         if (!$this->items->contains($i)) {
             $this->items->add($i);
             $i->setInvoice($this);
         }
+
         return $this;
     }
 
     /** @return Collection<int, Payment> */
-    public function getPayments(): Collection { return $this->payments; }
+    public function getPayments(): Collection
+    {
+        return $this->payments;
+    }
+
     public function addPayment(Payment $p): self
     {
         if (!$this->payments->contains($p)) {
             $this->payments->add($p);
             $p->setInvoice($this);
         }
+
         return $this;
     }
 
     public function getTotalHt(): int
     {
-        return array_sum(array_map(fn (InvoiceItem $i) => $i->getTotalHt(), $this->items->toArray()));
+        return array_sum(array_map(static fn (InvoiceItem $i): int => $i->getTotalHt(), $this->items->toArray()));
     }
 
     public function getTotalTtc(): int
@@ -122,7 +227,7 @@ class Invoice
 
     public function getAmountPaid(): int
     {
-        return array_sum(array_map(fn (Payment $p) => $p->getAmount(), $this->payments->toArray()));
+        return array_sum(array_map(static fn (Payment $p): int => $p->getAmount(), $this->payments->toArray()));
     }
 
     public function getBalanceDue(): int

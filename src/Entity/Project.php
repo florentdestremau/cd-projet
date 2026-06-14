@@ -1,7 +1,5 @@
 <?php
 
-declare(strict_types=1);
-
 namespace App\Entity;
 
 use App\Enum\Priority;
@@ -76,7 +74,7 @@ class Project
     #[ORM\OneToMany(targetEntity: ProjectStageStatus::class, mappedBy: 'project', cascade: ['persist', 'remove'], orphanRemoval: true)]
     private Collection $stageStatuses;
 
-    #[ORM\Column(length: 64, nullable: true, unique: true)]
+    #[ORM\Column(length: 64, unique: true, nullable: true)]
     private ?string $clientAccessToken = null;
 
     #[ORM\Column]
@@ -92,43 +90,213 @@ class Project
         $this->stageStatuses = new ArrayCollection();
     }
 
-    public function getId(): ?int { return $this->id; }
-    public function getReference(): string { return $this->reference; }
-    public function setReference(string $reference): self { $this->reference = $reference; return $this; }
-    public function getTitle(): string { return $this->title; }
-    public function setTitle(string $title): self { $this->title = $title; return $this; }
-    public function getClient(): ?Client { return $this->client; }
-    public function setClient(?Client $client): self { $this->client = $client; return $this; }
-    public function getStatus(): ProjectStatus { return $this->status; }
-    public function setStatus(ProjectStatus $status): self { $this->status = $status; return $this; }
-    public function getCurrentStage(): ProjectStage { return $this->currentStage; }
-    public function setCurrentStage(ProjectStage $stage): self { $this->currentStage = $stage; return $this; }
-    public function getPriority(): Priority { return $this->priority; }
-    public function setPriority(Priority $priority): self { $this->priority = $priority; return $this; }
-    public function getTargetDeliveryDate(): ?\DateTimeImmutable { return $this->targetDeliveryDate; }
-    public function setTargetDeliveryDate(?\DateTimeImmutable $date): self { $this->targetDeliveryDate = $date; return $this; }
-    public function getDeliveredAt(): ?\DateTimeImmutable { return $this->deliveredAt; }
-    public function setDeliveredAt(?\DateTimeImmutable $date): self { $this->deliveredAt = $date; return $this; }
-    public function getBudgetTarget(): int { return $this->budgetTarget; }
-    public function setBudgetTarget(int $cents): self { $this->budgetTarget = $cents; return $this; }
-    public function getSellingPrice(): int { return $this->sellingPrice; }
-    public function setSellingPrice(int $cents): self { $this->sellingPrice = $cents; return $this; }
-    public function getDescription(): ?string { return $this->description; }
-    public function setDescription(?string $description): self { $this->description = $description; return $this; }
-    public function getAssignedDesigner(): ?User { return $this->assignedDesigner; }
-    public function setAssignedDesigner(?User $user): self { $this->assignedDesigner = $user; return $this; }
-    public function getAssignedJeweler(): ?User { return $this->assignedJeweler; }
-    public function setAssignedJeweler(?User $user): self { $this->assignedJeweler = $user; return $this; }
-    public function getAssignedSetter(): ?User { return $this->assignedSetter; }
-    public function setAssignedSetter(?User $user): self { $this->assignedSetter = $user; return $this; }
-    public function getCreatedAt(): \DateTimeImmutable { return $this->createdAt; }
-    public function getUpdatedAt(): \DateTimeImmutable { return $this->updatedAt; }
-    public function touch(): self { $this->updatedAt = new \DateTimeImmutable(); return $this; }
-    public function getClientAccessToken(): ?string { return $this->clientAccessToken; }
-    public function setClientAccessToken(?string $t): self { $this->clientAccessToken = $t; return $this; }
+    public function getId(): ?int
+    {
+        return $this->id;
+    }
+
+    public function getReference(): string
+    {
+        return $this->reference;
+    }
+
+    public function setReference(string $reference): self
+    {
+        $this->reference = $reference;
+
+        return $this;
+    }
+
+    public function getTitle(): string
+    {
+        return $this->title;
+    }
+
+    public function setTitle(string $title): self
+    {
+        $this->title = $title;
+
+        return $this;
+    }
+
+    public function getClient(): ?Client
+    {
+        return $this->client;
+    }
+
+    public function setClient(?Client $client): self
+    {
+        $this->client = $client;
+
+        return $this;
+    }
+
+    public function getStatus(): ProjectStatus
+    {
+        return $this->status;
+    }
+
+    public function setStatus(ProjectStatus $status): self
+    {
+        $this->status = $status;
+
+        return $this;
+    }
+
+    public function getCurrentStage(): ProjectStage
+    {
+        return $this->currentStage;
+    }
+
+    public function setCurrentStage(ProjectStage $stage): self
+    {
+        $this->currentStage = $stage;
+
+        return $this;
+    }
+
+    public function getPriority(): Priority
+    {
+        return $this->priority;
+    }
+
+    public function setPriority(Priority $priority): self
+    {
+        $this->priority = $priority;
+
+        return $this;
+    }
+
+    public function getTargetDeliveryDate(): ?\DateTimeImmutable
+    {
+        return $this->targetDeliveryDate;
+    }
+
+    public function setTargetDeliveryDate(?\DateTimeImmutable $date): self
+    {
+        $this->targetDeliveryDate = $date;
+
+        return $this;
+    }
+
+    public function getDeliveredAt(): ?\DateTimeImmutable
+    {
+        return $this->deliveredAt;
+    }
+
+    public function setDeliveredAt(?\DateTimeImmutable $date): self
+    {
+        $this->deliveredAt = $date;
+
+        return $this;
+    }
+
+    public function getBudgetTarget(): int
+    {
+        return $this->budgetTarget;
+    }
+
+    public function setBudgetTarget(int $cents): self
+    {
+        $this->budgetTarget = $cents;
+
+        return $this;
+    }
+
+    public function getSellingPrice(): int
+    {
+        return $this->sellingPrice;
+    }
+
+    public function setSellingPrice(int $cents): self
+    {
+        $this->sellingPrice = $cents;
+
+        return $this;
+    }
+
+    public function getDescription(): ?string
+    {
+        return $this->description;
+    }
+
+    public function setDescription(?string $description): self
+    {
+        $this->description = $description;
+
+        return $this;
+    }
+
+    public function getAssignedDesigner(): ?User
+    {
+        return $this->assignedDesigner;
+    }
+
+    public function setAssignedDesigner(?User $user): self
+    {
+        $this->assignedDesigner = $user;
+
+        return $this;
+    }
+
+    public function getAssignedJeweler(): ?User
+    {
+        return $this->assignedJeweler;
+    }
+
+    public function setAssignedJeweler(?User $user): self
+    {
+        $this->assignedJeweler = $user;
+
+        return $this;
+    }
+
+    public function getAssignedSetter(): ?User
+    {
+        return $this->assignedSetter;
+    }
+
+    public function setAssignedSetter(?User $user): self
+    {
+        $this->assignedSetter = $user;
+
+        return $this;
+    }
+
+    public function getCreatedAt(): \DateTimeImmutable
+    {
+        return $this->createdAt;
+    }
+
+    public function getUpdatedAt(): \DateTimeImmutable
+    {
+        return $this->updatedAt;
+    }
+
+    public function touch(): self
+    {
+        $this->updatedAt = new \DateTimeImmutable();
+
+        return $this;
+    }
+
+    public function getClientAccessToken(): ?string
+    {
+        return $this->clientAccessToken;
+    }
+
+    public function setClientAccessToken(?string $t): self
+    {
+        $this->clientAccessToken = $t;
+
+        return $this;
+    }
 
     /** @return Collection<int, ProjectStageStatus> */
-    public function getStageStatuses(): Collection { return $this->stageStatuses; }
+    public function getStageStatuses(): Collection
+    {
+        return $this->stageStatuses;
+    }
 
     public function addStageStatus(ProjectStageStatus $status): self
     {
@@ -142,12 +310,12 @@ class Project
 
     public function progressPercent(): int
     {
-        $applicable = $this->stageStatuses->filter(fn (ProjectStageStatus $s) => $s->isApplicable());
+        $applicable = $this->stageStatuses->filter(static fn (ProjectStageStatus $s): bool => $s->isApplicable());
         $total = $applicable->count();
-        if ($total === 0) {
+        if (0 === $total) {
             return 0;
         }
-        $done = $applicable->filter(fn (ProjectStageStatus $s) => $s->getCompletedAt() !== null)->count();
+        $done = $applicable->filter(static fn (ProjectStageStatus $s): bool => $s->getCompletedAt() instanceof \DateTimeImmutable)->count();
 
         return (int) round($done / $total * 100);
     }

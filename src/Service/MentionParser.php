@@ -1,17 +1,15 @@
 <?php
 
-declare(strict_types=1);
-
 namespace App\Service;
 
 use App\Entity\Comment;
 use App\Entity\User;
 use App\Repository\UserRepository;
 
-final class MentionParser
+final readonly class MentionParser
 {
     public function __construct(
-        private readonly UserRepository $userRepository,
+        private UserRepository $userRepository,
     ) {
     }
 
@@ -25,8 +23,8 @@ final class MentionParser
             return;
         }
 
-        $handles = array_unique(array_map('strtolower', $matches[1]));
-        if ($handles === []) {
+        $handles = array_unique(array_map(strtolower(...), $matches[1]));
+        if ([] === $handles) {
             return;
         }
 

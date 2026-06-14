@@ -33,7 +33,7 @@
                             <strong>{{ project.title|u.truncate(48, '…') }}</strong>
                             <span class="text-xs text-soft">{{ project.client.displayName|u.truncate(28, '…') }}</span>
                             {% if project.targetDeliveryDate %}
-                                <span class="text-xs text-muted">{{ project.targetDeliveryDate|format_date('short', locale='fr') }}</span>
+                                <span class="text-xs text-muted">{{ project.targetDeliveryDate|format_date('short', locale: 'fr') }}</span>
                             {% endif %}
                         </a>
                     {% endfor %}

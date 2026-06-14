@@ -1,7 +1,5 @@
 <?php
 
-declare(strict_types=1);
-
 namespace App\Service;
 
 use App\Entity\Comment;
@@ -11,12 +9,12 @@ use Symfony\Component\Mercure\HubInterface;
 use Symfony\Component\Mercure\Update;
 use Twig\Environment;
 
-final class ActivityPublisher
+final readonly class ActivityPublisher
 {
     public function __construct(
-        private readonly HubInterface $hub,
-        private readonly Environment $twig,
-        private readonly LoggerInterface $logger,
+        private HubInterface $hub,
+        private Environment $twig,
+        private LoggerInterface $logger,
     ) {
     }
 
@@ -33,7 +31,7 @@ final class ActivityPublisher
                 'project' => $project,
             ]);
             $this->hub->publish(new Update(
-                sprintf('project/%d', $project->getId()),
+                \sprintf('project/%d', $project->getId()),
                 $stream,
             ));
 
@@ -44,9 +42,9 @@ final class ActivityPublisher
                     'project_title' => $project->getTitle(),
                     'author' => $comment->getAuthor()?->getFullName(),
                     'excerpt' => mb_substr($comment->getBody(), 0, 140),
-                ], JSON_THROW_ON_ERROR);
+                ], \JSON_THROW_ON_ERROR);
                 $this->hub->publish(new Update(
-                    sprintf('user/%d/notifications', $user->getId()),
+                    \sprintf('user/%d/notifications', $user->getId()),
                     $payload,
                     private: true,
                 ));

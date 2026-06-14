@@ -1,7 +1,5 @@
 <?php
 
-declare(strict_types=1);
-
 namespace App\Tests\Controller;
 
 use App\Repository\InvoiceRepository;
@@ -13,8 +11,8 @@ final class FinanceTest extends WebTestCase
 {
     public function testFinanceDashboardRenders(): void
     {
-        $client = static::createClient();
-        $admin = static::getContainer()->get(UserRepository::class)->findByEmail('admin@maison.test');
+        $client = self::createClient();
+        $admin = self::getContainer()->get(UserRepository::class)->findByEmail('admin@maison.test');
         $client->loginUser($admin);
 
         $client->request('GET', '/finances');
@@ -24,8 +22,8 @@ final class FinanceTest extends WebTestCase
 
     public function testCsvExportInvoices(): void
     {
-        $client = static::createClient();
-        $admin = static::getContainer()->get(UserRepository::class)->findByEmail('admin@maison.test');
+        $client = self::createClient();
+        $admin = self::getContainer()->get(UserRepository::class)->findByEmail('admin@maison.test');
         $client->loginUser($admin);
 
         $client->catchExceptions(false);
@@ -37,24 +35,24 @@ final class FinanceTest extends WebTestCase
 
     public function testQuotePdfRenders(): void
     {
-        $client = static::createClient();
-        $quote = static::getContainer()->get(QuoteRepository::class)->findOneBy([]);
+        $client = self::createClient();
+        $quote = self::getContainer()->get(QuoteRepository::class)->findOneBy([]);
         self::assertNotNull($quote);
-        $admin = static::getContainer()->get(UserRepository::class)->findByEmail('admin@maison.test');
+        $admin = self::getContainer()->get(UserRepository::class)->findByEmail('admin@maison.test');
         $client->loginUser($admin);
 
         $client->request('GET', '/devis/'.$quote->getReference().'/pdf');
         self::assertResponseIsSuccessful();
         self::assertSame('application/pdf', $client->getResponse()->headers->get('Content-Type'));
-        self::assertGreaterThan(1000, strlen((string) $client->getResponse()->getContent()));
+        self::assertGreaterThan(1000, \strlen((string) $client->getResponse()->getContent()));
     }
 
     public function testInvoicePdfRenders(): void
     {
-        $client = static::createClient();
-        $invoice = static::getContainer()->get(InvoiceRepository::class)->findOneBy([]);
+        $client = self::createClient();
+        $invoice = self::getContainer()->get(InvoiceRepository::class)->findOneBy([]);
         self::assertNotNull($invoice);
-        $admin = static::getContainer()->get(UserRepository::class)->findByEmail('admin@maison.test');
+        $admin = self::getContainer()->get(UserRepository::class)->findByEmail('admin@maison.test');
         $client->loginUser($admin);
 
         $client->request('GET', '/factures/'.$invoice->getReference().'/pdf');

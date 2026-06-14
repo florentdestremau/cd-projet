@@ -38,23 +38,23 @@ final class PortalController extends AbstractController
         ]);
     }
 
-    #[Route('/portail/{token}/valider', name: 'app_portal_validate', methods: ['POST'], requirements: ['token' => '[a-f0-9]{64}'])]
+    #[Route('/portail/{token}/valider', name: 'app_portal_validate', requirements: ['token' => '[a-f0-9]{64}'], methods: ['POST'])]
     public function validate(
         string $token,
         ProjectRepository $repository,
         \Doctrine\ORM\EntityManagerInterface $em,
-    ): Response {
+    ): \Symfony\Component\HttpFoundation\RedirectResponse {
         $project = $repository->findOneBy(['clientAccessToken' => $token]);
         if (!$project instanceof Project) {
             throw $this->createNotFoundException();
         }
 
-        if ($project->getCurrentStage() === \App\Enum\ProjectStage::CLIENT_VALIDATION) {
+        if (\App\Enum\ProjectStage::CLIENT_VALIDATION === $project->getCurrentStage()) {
             foreach ($project->getStageStatuses() as $status) {
-                if ($status->getStage() === \App\Enum\ProjectStage::CLIENT_VALIDATION) {
+                if (\App\Enum\ProjectStage::CLIENT_VALIDATION === $status->getStage()) {
                     $status->setCompletedAt(new \DateTimeImmutable());
                 }
-                if ($status->getStage() === \App\Enum\ProjectStage::CAD_3D && $status->getStartedAt() === null) {
+                if (\App\Enum\ProjectStage::CAD_3D === $status->getStage() && null === $status->getStartedAt()) {
                     $status->setStartedAt(new \DateTimeImmutable());
                 }
             }

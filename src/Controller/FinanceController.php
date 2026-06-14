@@ -1,7 +1,5 @@
 <?php
 
-declare(strict_types=1);
-
 namespace App\Controller;
 
 use App\Entity\Expense;
@@ -25,11 +23,11 @@ final class FinanceController extends AbstractController
     {
         $now = new \DateTimeImmutable();
         $caMonth = array_sum(array_map(
-            fn (Invoice $i) => $i->getTotalHt(),
+            static fn (Invoice $i): int => $i->getTotalHt(),
             $invoiceRepo->findPaidInMonth($now),
         ));
         $overdue = $invoiceRepo->findOverdue();
-        $overdueTotal = array_sum(array_map(fn (Invoice $i) => $i->getBalanceDue(), $overdue));
+        $overdueTotal = array_sum(array_map(static fn (Invoice $i): int => $i->getBalanceDue(), $overdue));
 
         return $this->render('finance/dashboard.html.twig', [
             'ca_month' => $caMonth,
@@ -45,9 +43,9 @@ final class FinanceController extends AbstractController
         $from = new \DateTimeImmutable($request->query->getString('from', date('Y-01-01')));
         $to = new \DateTimeImmutable($request->query->getString('to', date('Y-m-d')));
 
-        $response = new StreamedResponse(function () use ($type, $invoiceRepo, $paymentRepo, $expenseRepo, $from, $to) {
-            $out = fopen('php://output', 'wb');
-            assert(is_resource($out));
+        $response = new StreamedResponse(function () use ($type, $invoiceRepo, $paymentRepo, $expenseRepo, $from, $to): void {
+            $out = fopen('php://output', 'w');
+            \assert(\is_resource($out));
             match ($type) {
                 'invoices' => $this->streamInvoices($out, $invoiceRepo, $from, $to),
                 'payments' => $this->streamPayments($out, $paymentRepo, $from, $to),
@@ -58,7 +56,8 @@ final class FinanceController extends AbstractController
         });
 
         $response->headers->set('Content-Type', 'text/csv; charset=utf-8');
-        $response->headers->set('Content-Disposition', sprintf('attachment; filename="%s_%s_%s.csv"', $type, $from->format('Ymd'), $to->format('Ymd')));
+        $response->headers->set('Content-Disposition', \sprintf('attachment; filename="%s_%s_%s.csv"', $type, $from->format('Ymd'), $to->format('Ymd')));
+
         return $response;
     }
 
@@ -81,7 +80,7 @@ final class FinanceController extends AbstractController
             ->orderBy('i.createdAt', 'ASC')
             ->getQuery()->getResult();
         foreach ($invoices as $invoice) {
-            assert($invoice instanceof Invoice);
+            \assert($invoice instanceof Invoice);
             $this->writeRow($out, [
                 $invoice->getReference(),
                 $invoice->getProject()?->getReference(),
@@ -107,7 +106,7 @@ final class FinanceController extends AbstractController
             ->orderBy('p.receivedAt', 'ASC')
             ->getQuery()->getResult();
         foreach ($payments as $p) {
-            assert($p instanceof Payment);
+            \assert($p instanceof Payment);
             $this->writeRow($out, [
                 $p->getReceivedAt()->format('Y-m-d'),
                 $p->getInvoice()?->getReference(),
@@ -128,7 +127,7 @@ final class FinanceController extends AbstractController
             ->orderBy('e.occurredAt', 'ASC')
             ->getQuery()->getResult();
         foreach ($expenses as $e) {
-            assert($e instanceof Expense);
+            \assert($e instanceof Expense);
             $this->writeRow($out, [
                 $e->getOccurredAt()->format('Y-m-d'),
                 $e->getProject()?->getReference(),

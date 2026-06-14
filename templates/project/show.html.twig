@@ -8,7 +8,7 @@
             <h1 class="page__title">{{ project.title }}</h1>
             <p class="page__subtitle">
                 Pour <strong>{{ project.client.displayName }}</strong>
-                {% if project.targetDeliveryDate %} · Livraison prévue le {{ project.targetDeliveryDate|format_date('long', locale='fr') }}{% endif %}
+                {% if project.targetDeliveryDate %} · Livraison prévue le {{ project.targetDeliveryDate|format_date('long', locale: 'fr') }}{% endif %}
             </p>
         </div>
         <div class="page__actions">
@@ -45,7 +45,7 @@
             {{ turbo_stream_from(['project/' ~ project.id]) }}
             <div id="project-comments" class="stack">
                 {% for comment in comments %}
-                    {% include 'project/_comment.html.twig' with {comment: comment} %}
+                    {{ include('project/_comment.html.twig', {comment: comment}) }}
                 {% else %}
                     <p class="text-muted">Aucun message pour le moment.</p>
                 {% endfor %}
@@ -84,10 +84,10 @@
             <article class="card">
                 <h3 class="card__title">Finances</h3>
                 <p class="text-sm">
-                    <span class="text-muted">Budget cible&nbsp;:</span> {{ (project.budgetTarget / 100)|format_currency('EUR', locale='fr') }}<br>
-                    <span class="text-muted">Prix de vente&nbsp;:</span> <strong>{{ (project.sellingPrice / 100)|format_currency('EUR', locale='fr') }}</strong><br>
-                    <span class="text-muted">Dépenses imputées&nbsp;:</span> {{ (expenses_total / 100)|format_currency('EUR', locale='fr') }}<br>
-                    <span class="text-muted">Marge prévue&nbsp;:</span> <strong style="color: {{ margin > 0 ? 'var(--color-success)' : 'var(--color-danger)' }};">{{ (margin / 100)|format_currency('EUR', locale='fr') }}</strong>
+                    <span class="text-muted">Budget cible&nbsp;:</span> {{ (project.budgetTarget / 100)|format_currency('EUR', locale: 'fr') }}<br>
+                    <span class="text-muted">Prix de vente&nbsp;:</span> <strong>{{ (project.sellingPrice / 100)|format_currency('EUR', locale: 'fr') }}</strong><br>
+                    <span class="text-muted">Dépenses imputées&nbsp;:</span> {{ (expenses_total / 100)|format_currency('EUR', locale: 'fr') }}<br>
+                    <span class="text-muted">Marge prévue&nbsp;:</span> <strong style="color: {{ margin > 0 ? 'var(--color-success)' : 'var(--color-danger)' }};">{{ (margin / 100)|format_currency('EUR', locale: 'fr') }}</strong>
                 </p>
                 <div style="display: flex; gap: var(--space-2); margin-top: var(--space-3);">
                     <a href="{{ path('app_quotes_new', {reference: project.reference}) }}" class="btn btn--ghost" style="font-size: var(--text-xs);">+ Devis</a>
@@ -101,13 +101,13 @@
                     {% for q in quotes %}
                         <p class="text-sm" style="display: flex; justify-content: space-between; padding: var(--space-1) 0;">
                             <a href="{{ path('app_quotes_show', {reference: q.reference}) }}">{{ q.reference }}</a>
-                            <span><span class="tag">{{ q.status.label }}</span> <span style="font-variant-numeric: tabular-nums;">{{ (q.totalTtc / 100)|format_currency('EUR', locale='fr') }}</span></span>
+                            <span><span class="tag">{{ q.status.label }}</span> <span style="font-variant-numeric: tabular-nums;">{{ (q.totalTtc / 100)|format_currency('EUR', locale: 'fr') }}</span></span>
                         </p>
                     {% endfor %}
                     {% for i in invoices %}
                         <p class="text-sm" style="display: flex; justify-content: space-between; padding: var(--space-1) 0;">
                             <a href="{{ path('app_invoices_show', {reference: i.reference}) }}">{{ i.reference }}</a>
-                            <span><span class="tag tag--gold">{{ i.status.label }}</span> <span style="font-variant-numeric: tabular-nums;">{{ (i.totalTtc / 100)|format_currency('EUR', locale='fr') }}</span></span>
+                            <span><span class="tag tag--gold">{{ i.status.label }}</span> <span style="font-variant-numeric: tabular-nums;">{{ (i.totalTtc / 100)|format_currency('EUR', locale: 'fr') }}</span></span>
                         </p>
                     {% endfor %}
                 </article>
@@ -120,7 +120,7 @@
                         {% for e in expenses %}
                             <li style="display: flex; justify-content: space-between; align-items: baseline; padding: var(--space-1) 0; border-bottom: 1px solid var(--color-line); font-size: var(--text-sm);">
                                 <span>{{ e.description }} <span class="text-muted">· {{ e.category.label }}{% if e.supplierName %} · {{ e.supplierName }}{% endif %}</span></span>
-                                <span style="font-variant-numeric: tabular-nums;">{{ (e.amountHt / 100)|format_currency('EUR', locale='fr') }}</span>
+                                <span style="font-variant-numeric: tabular-nums;">{{ (e.amountHt / 100)|format_currency('EUR', locale: 'fr') }}</span>
                             </li>
                         {% endfor %}
                     </ul>

@@ -1,7 +1,5 @@
 <?php
 
-declare(strict_types=1);
-
 namespace App\Entity;
 
 use App\Enum\PaymentMethod;
@@ -38,15 +36,68 @@ class Payment
         $this->receivedAt = new \DateTimeImmutable();
     }
 
-    public function getId(): ?int { return $this->id; }
-    public function getInvoice(): ?Invoice { return $this->invoice; }
-    public function setInvoice(?Invoice $i): self { $this->invoice = $i; return $this; }
-    public function getAmount(): int { return $this->amount; }
-    public function setAmount(int $a): self { $this->amount = $a; return $this; }
-    public function getMethod(): PaymentMethod { return $this->method; }
-    public function setMethod(PaymentMethod $m): self { $this->method = $m; return $this; }
-    public function getReceivedAt(): \DateTimeImmutable { return $this->receivedAt; }
-    public function setReceivedAt(\DateTimeImmutable $d): self { $this->receivedAt = $d; return $this; }
-    public function getReference(): ?string { return $this->reference; }
-    public function setReference(?string $r): self { $this->reference = $r; return $this; }
+    public function getId(): ?int
+    {
+        return $this->id;
+    }
+
+    public function getInvoice(): ?Invoice
+    {
+        return $this->invoice;
+    }
+
+    public function setInvoice(?Invoice $i): self
+    {
+        $this->invoice = $i;
+
+        return $this;
+    }
+
+    public function getAmount(): int
+    {
+        return $this->amount;
+    }
+
+    public function setAmount(int $a): self
+    {
+        $this->amount = $a;
+
+        return $this;
+    }
+
+    public function getMethod(): PaymentMethod
+    {
+        return $this->method;
+    }
+
+    public function setMethod(PaymentMethod $m): self
+    {
+        $this->method = $m;
+
+        return $this;
+    }
+
+    public function getReceivedAt(): \DateTimeImmutable
+    {
+        return $this->receivedAt;
+    }
+
+    public function setReceivedAt(\DateTimeImmutable $d): self
+    {
+        $this->receivedAt = $d;
+
+        return $this;
+    }
+
+    public function getReference(): ?string
+    {
+        return $this->reference;
+    }
+
+    public function setReference(?string $r): self
+    {
+        $this->reference = $r;
+
+        return $this;
+    }
 }

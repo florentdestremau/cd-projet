@@ -1,7 +1,5 @@
 <?php
 
-declare(strict_types=1);
-
 namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
@@ -29,14 +27,61 @@ class QuoteItem
     #[ORM\Column]
     private int $unitPriceHt = 0;
 
-    public function getId(): ?int { return $this->id; }
-    public function getQuote(): ?Quote { return $this->quote; }
-    public function setQuote(?Quote $q): self { $this->quote = $q; return $this; }
-    public function getDescription(): string { return $this->description; }
-    public function setDescription(string $d): self { $this->description = $d; return $this; }
-    public function getQuantity(): int { return $this->quantity; }
-    public function setQuantity(int $q): self { $this->quantity = $q; return $this; }
-    public function getUnitPriceHt(): int { return $this->unitPriceHt; }
-    public function setUnitPriceHt(int $p): self { $this->unitPriceHt = $p; return $this; }
-    public function getTotalHt(): int { return $this->quantity * $this->unitPriceHt; }
+    public function getId(): ?int
+    {
+        return $this->id;
+    }
+
+    public function getQuote(): ?Quote
+    {
+        return $this->quote;
+    }
+
+    public function setQuote(?Quote $q): self
+    {
+        $this->quote = $q;
+
+        return $this;
+    }
+
+    public function getDescription(): string
+    {
+        return $this->description;
+    }
+
+    public function setDescription(string $d): self
+    {
+        $this->description = $d;
+
+        return $this;
+    }
+
+    public function getQuantity(): int
+    {
+        return $this->quantity;
+    }
+
+    public function setQuantity(int $q): self
+    {
+        $this->quantity = $q;
+
+        return $this;
+    }
+
+    public function getUnitPriceHt(): int
+    {
+        return $this->unitPriceHt;
+    }
+
+    public function setUnitPriceHt(int $p): self
+    {
+        $this->unitPriceHt = $p;
+
+        return $this;
+    }
+
+    public function getTotalHt(): int
+    {
+        return $this->quantity * $this->unitPriceHt;
+    }
 }

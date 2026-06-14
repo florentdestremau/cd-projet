@@ -1,7 +1,5 @@
 <?php
 
-declare(strict_types=1);
-
 namespace App\Entity;
 
 use App\Enum\QuoteStatus;
@@ -59,39 +57,131 @@ class Quote
         $this->items = new ArrayCollection();
     }
 
-    public function getId(): ?int { return $this->id; }
-    public function getReference(): string { return $this->reference; }
-    public function setReference(string $reference): self { $this->reference = $reference; return $this; }
-    public function getProject(): ?Project { return $this->project; }
-    public function setProject(?Project $project): self { $this->project = $project; return $this; }
-    public function getStatus(): QuoteStatus { return $this->status; }
-    public function setStatus(QuoteStatus $status): self { $this->status = $status; return $this; }
-    public function getValidUntil(): ?\DateTimeImmutable { return $this->validUntil; }
-    public function setValidUntil(?\DateTimeImmutable $d): self { $this->validUntil = $d; return $this; }
-    public function getVatRate(): int { return $this->vatRate; }
-    public function setVatRate(int $rate): self { $this->vatRate = $rate; return $this; }
-    public function getSentAt(): ?\DateTimeImmutable { return $this->sentAt; }
-    public function setSentAt(?\DateTimeImmutable $d): self { $this->sentAt = $d; return $this; }
-    public function getAcceptedAt(): ?\DateTimeImmutable { return $this->acceptedAt; }
-    public function setAcceptedAt(?\DateTimeImmutable $d): self { $this->acceptedAt = $d; return $this; }
-    public function getPdfPath(): ?string { return $this->pdfPath; }
-    public function setPdfPath(?string $path): self { $this->pdfPath = $path; return $this; }
-    public function getCreatedAt(): \DateTimeImmutable { return $this->createdAt; }
+    public function getId(): ?int
+    {
+        return $this->id;
+    }
+
+    public function getReference(): string
+    {
+        return $this->reference;
+    }
+
+    public function setReference(string $reference): self
+    {
+        $this->reference = $reference;
+
+        return $this;
+    }
+
+    public function getProject(): ?Project
+    {
+        return $this->project;
+    }
+
+    public function setProject(?Project $project): self
+    {
+        $this->project = $project;
+
+        return $this;
+    }
+
+    public function getStatus(): QuoteStatus
+    {
+        return $this->status;
+    }
+
+    public function setStatus(QuoteStatus $status): self
+    {
+        $this->status = $status;
+
+        return $this;
+    }
+
+    public function getValidUntil(): ?\DateTimeImmutable
+    {
+        return $this->validUntil;
+    }
+
+    public function setValidUntil(?\DateTimeImmutable $d): self
+    {
+        $this->validUntil = $d;
+
+        return $this;
+    }
+
+    public function getVatRate(): int
+    {
+        return $this->vatRate;
+    }
+
+    public function setVatRate(int $rate): self
+    {
+        $this->vatRate = $rate;
+
+        return $this;
+    }
+
+    public function getSentAt(): ?\DateTimeImmutable
+    {
+        return $this->sentAt;
+    }
+
+    public function setSentAt(?\DateTimeImmutable $d): self
+    {
+        $this->sentAt = $d;
+
+        return $this;
+    }
+
+    public function getAcceptedAt(): ?\DateTimeImmutable
+    {
+        return $this->acceptedAt;
+    }
+
+    public function setAcceptedAt(?\DateTimeImmutable $d): self
+    {
+        $this->acceptedAt = $d;
+
+        return $this;
+    }
+
+    public function getPdfPath(): ?string
+    {
+        return $this->pdfPath;
+    }
+
+    public function setPdfPath(?string $path): self
+    {
+        $this->pdfPath = $path;
+
+        return $this;
+    }
+
+    public function getCreatedAt(): \DateTimeImmutable
+    {
+        return $this->createdAt;
+    }
 
     /** @return Collection<int, QuoteItem> */
-    public function getItems(): Collection { return $this->items; }
+    public function getItems(): Collection
+    {
+        return $this->items;
+    }
+
     public function addItem(QuoteItem $item): self
     {
         if (!$this->items->contains($item)) {
             $this->items->add($item);
             $item->setQuote($this);
         }
+
         return $this;
     }
 
     public function getTotalHt(): int
     {
-        return array_sum(array_map(fn (QuoteItem $i) => $i->getTotalHt(), $this->items->toArray()));
+        return array_sum(array_map(static fn (QuoteItem $i): int => $i->getTotalHt(), $this->items->toArray()));
     }
 
     public function getTotalTtc(): int

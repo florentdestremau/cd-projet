@@ -1,7 +1,5 @@
 <?php
 
-declare(strict_types=1);
-
 namespace App\Controller;
 
 use App\Entity\ActivityLog;
@@ -20,7 +18,7 @@ use Symfony\Component\Routing\Attribute\Route;
 
 final class CommentController extends AbstractController
 {
-    #[Route('/projets/{reference}/commentaires', name: 'app_comments_create', methods: ['POST'], requirements: ['reference' => 'BAG-\d+-\d+'])]
+    #[Route('/projets/{reference}/commentaires', name: 'app_comments_create', requirements: ['reference' => 'BAG-\d+-\d+'], methods: ['POST'])]
     public function create(
         string $reference,
         Request $request,
@@ -29,7 +27,7 @@ final class CommentController extends AbstractController
         EntityManagerInterface $em,
         ActivityPublisher $activityPublisher,
         WebPushSender $webPushSender,
-    ): Response {
+    ): \Symfony\Component\HttpFoundation\RedirectResponse {
         $project = $projectRepository->findOneBy(['reference' => $reference]);
         if (!$project instanceof Project) {
             throw $this->createNotFoundException();
@@ -39,7 +37,7 @@ final class CommentController extends AbstractController
         }
 
         $body = trim($request->request->getString('body'));
-        if ($body === '') {
+        if ('' === $body) {
             $this->addFlash('error', 'Le message ne peut pas être vide.');
 
             return $this->redirectToRoute('app_projects_show', ['reference' => $reference]);
@@ -70,7 +68,7 @@ final class CommentController extends AbstractController
         foreach ($comment->getMentions() as $mentioned) {
             $webPushSender->notify(
                 $mentioned,
-                sprintf('%s vous mentionne', $user->getFirstName()),
+                \sprintf('%s vous mentionne', $user->getFirstName()),
                 mb_substr($body, 0, 180),
                 $this->generateUrl('app_projects_show', ['reference' => $project->getReference()]),
             );

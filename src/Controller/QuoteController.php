@@ -1,7 +1,5 @@
 <?php
 
-declare(strict_types=1);
-
 namespace App\Controller;
 
 use App\Entity\Project;
@@ -36,7 +34,7 @@ final class QuoteController extends AbstractController
             $quote->setProject($project);
             $quote->setReference($quoteRepo->generateNextReference((int) date('Y')));
             $validUntil = $request->request->getString('validUntil');
-            if ($validUntil !== '') {
+            if ('' !== $validUntil) {
                 $quote->setValidUntil(new \DateTimeImmutable($validUntil));
             }
             $quote->setVatRate((int) ($request->request->getString('vatRate', '20.00') * 100));
@@ -46,7 +44,9 @@ final class QuoteController extends AbstractController
             $prices = $request->request->all('prices');
             foreach ($descriptions as $idx => $desc) {
                 $desc = trim((string) $desc);
-                if ($desc === '') continue;
+                if ('' === $desc) {
+                    continue;
+                }
                 $item = new QuoteItem();
                 $item->setDescription($desc);
                 $item->setQuantity((int) ($quantities[$idx] ?? 1));
@@ -57,6 +57,7 @@ final class QuoteController extends AbstractController
             $em->flush();
 
             $this->addFlash('success', 'Devis '.$quote->getReference().' créé.');
+
             return $this->redirectToRoute('app_quotes_show', ['reference' => $quote->getReference()]);
         }
 
@@ -70,6 +71,7 @@ final class QuoteController extends AbstractController
         if (!$quote instanceof Quote) {
             throw $this->createNotFoundException();
         }
+
         return $this->render('quote/show.html.twig', ['quote' => $quote]);
     }
 
@@ -81,14 +83,15 @@ final class QuoteController extends AbstractController
             throw $this->createNotFoundException();
         }
         $output = $pdf->render('quote/pdf.html.twig', ['quote' => $quote]);
+
         return new Response($output, 200, [
             'Content-Type' => 'application/pdf',
-            'Content-Disposition' => sprintf('inline; filename="%s.pdf"', $quote->getReference()),
+            'Content-Disposition' => \sprintf('inline; filename="%s.pdf"', $quote->getReference()),
         ]);
     }
 
-    #[Route('/devis/{reference}/statut', name: 'app_quotes_status', methods: ['POST'], requirements: ['reference' => 'DEV-\d+-\d+'])]
-    public function status(string $reference, Request $request, QuoteRepository $repo, EntityManagerInterface $em): Response
+    #[Route('/devis/{reference}/statut', name: 'app_quotes_status', requirements: ['reference' => 'DEV-\d+-\d+'], methods: ['POST'])]
+    public function status(string $reference, Request $request, QuoteRepository $repo, EntityManagerInterface $em): \Symfony\Component\HttpFoundation\RedirectResponse
     {
         $quote = $repo->findOneBy(['reference' => $reference]);
         if (!$quote instanceof Quote) {
@@ -98,17 +101,18 @@ final class QuoteController extends AbstractController
             throw $this->createAccessDeniedException();
         }
         $status = QuoteStatus::tryFrom($request->request->getString('status'));
-        if ($status !== null) {
+        if (null !== $status) {
             $quote->setStatus($status);
-            if ($status === QuoteStatus::SENT && $quote->getSentAt() === null) {
+            if (QuoteStatus::SENT === $status && !$quote->getSentAt() instanceof \DateTimeImmutable) {
                 $quote->setSentAt(new \DateTimeImmutable());
             }
-            if ($status === QuoteStatus::ACCEPTED && $quote->getAcceptedAt() === null) {
+            if (QuoteStatus::ACCEPTED === $status && !$quote->getAcceptedAt() instanceof \DateTimeImmutable) {
                 $quote->setAcceptedAt(new \DateTimeImmutable());
             }
             $em->flush();
             $this->addFlash('success', 'Devis marqué « '.$status->label().' ».');
         }
+
         return $this->redirectToRoute('app_quotes_show', ['reference' => $reference]);
     }
 }

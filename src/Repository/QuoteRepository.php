@@ -20,7 +20,7 @@ class QuoteRepository extends ServiceEntityRepository
 
     public function generateNextReference(int $year): string
     {
-        $prefix = sprintf('DEV-%d-', $year);
+        $prefix = \sprintf('DEV-%d-', $year);
         $last = $this->createQueryBuilder('q')
             ->where('q.reference LIKE :p')
             ->setParameter('p', $prefix.'%')
@@ -30,8 +30,9 @@ class QuoteRepository extends ServiceEntityRepository
 
         $next = 1;
         if ($last instanceof Quote) {
-            $next = (int) substr($last->getReference(), strlen($prefix)) + 1;
+            $next = (int) substr($last->getReference(), \strlen($prefix)) + 1;
         }
-        return sprintf('%s%03d', $prefix, $next);
+
+        return \sprintf('%s%03d', $prefix, $next);
     }
 }

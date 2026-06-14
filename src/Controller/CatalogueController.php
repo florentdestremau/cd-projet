@@ -1,7 +1,5 @@
 <?php
 
-declare(strict_types=1);
-
 namespace App\Controller;
 
 use App\Entity\Material;
@@ -35,7 +33,7 @@ final class CatalogueController extends AbstractController
     }
 
     #[Route('/catalogues/materiaux', name: 'app_catalogues_material_create', methods: ['POST'])]
-    public function createMaterial(Request $request, EntityManagerInterface $em, SupplierRepository $supRepo): Response
+    public function createMaterial(Request $request, EntityManagerInterface $em, SupplierRepository $supRepo): \Symfony\Component\HttpFoundation\RedirectResponse
     {
         if (!$this->isCsrfTokenValid('catalogue_material', $request->request->getString('_token'))) {
             throw $this->createAccessDeniedException();
@@ -51,11 +49,12 @@ final class CatalogueController extends AbstractController
         $em->persist($m);
         $em->flush();
         $this->addFlash('success', 'Matière ajoutée.');
+
         return $this->redirectToRoute('app_catalogues_index');
     }
 
     #[Route('/catalogues/pierres', name: 'app_catalogues_stone_create', methods: ['POST'])]
-    public function createStone(Request $request, EntityManagerInterface $em, SupplierRepository $supRepo): Response
+    public function createStone(Request $request, EntityManagerInterface $em, SupplierRepository $supRepo): \Symfony\Component\HttpFoundation\RedirectResponse
     {
         if (!$this->isCsrfTokenValid('catalogue_stone', $request->request->getString('_token'))) {
             throw $this->createAccessDeniedException();
@@ -73,11 +72,12 @@ final class CatalogueController extends AbstractController
         $em->persist($s);
         $em->flush();
         $this->addFlash('success', 'Pierre ajoutée.');
+
         return $this->redirectToRoute('app_catalogues_index');
     }
 
     #[Route('/catalogues/fournisseurs', name: 'app_catalogues_supplier_create', methods: ['POST'])]
-    public function createSupplier(Request $request, EntityManagerInterface $em): Response
+    public function createSupplier(Request $request, EntityManagerInterface $em): \Symfony\Component\HttpFoundation\RedirectResponse
     {
         if (!$this->isCsrfTokenValid('catalogue_supplier', $request->request->getString('_token'))) {
             throw $this->createAccessDeniedException();
@@ -90,6 +90,7 @@ final class CatalogueController extends AbstractController
         $em->persist($s);
         $em->flush();
         $this->addFlash('success', 'Fournisseur ajouté.');
+
         return $this->redirectToRoute('app_catalogues_index');
     }
 }

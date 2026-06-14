@@ -1,7 +1,5 @@
 <?php
 
-declare(strict_types=1);
-
 namespace App\Tests\Controller;
 
 use App\Entity\Project;
@@ -14,15 +12,15 @@ final class ProjectTest extends WebTestCase
 {
     public function testProjectsListIsProtected(): void
     {
-        $client = static::createClient();
+        $client = self::createClient();
         $client->request('GET', '/projets');
         self::assertResponseRedirects('/login');
     }
 
     public function testProjectsListRendersActiveProjects(): void
     {
-        $client = static::createClient();
-        $marie = static::getContainer()->get(UserRepository::class)->findByEmail('designer1@maison.test');
+        $client = self::createClient();
+        $marie = self::getContainer()->get(UserRepository::class)->findByEmail('designer1@maison.test');
         $client->loginUser($marie);
 
         $crawler = $client->request('GET', '/projets');
@@ -37,8 +35,8 @@ final class ProjectTest extends WebTestCase
 
     public function testProjectsListFiltersByStage(): void
     {
-        $client = static::createClient();
-        $marie = static::getContainer()->get(UserRepository::class)->findByEmail('designer1@maison.test');
+        $client = self::createClient();
+        $marie = self::getContainer()->get(UserRepository::class)->findByEmail('designer1@maison.test');
         $client->loginUser($marie);
 
         $crawler = $client->request('GET', '/projets?stage=brief');
@@ -52,12 +50,12 @@ final class ProjectTest extends WebTestCase
 
     public function testProjectShowPageRenders(): void
     {
-        $client = static::createClient();
-        $em = static::getContainer()->get(EntityManagerInterface::class);
-        $project = static::getContainer()->get(ProjectRepository::class)->findActiveOrdered(1)[0] ?? null;
+        $client = self::createClient();
+        self::getContainer()->get(EntityManagerInterface::class);
+        $project = self::getContainer()->get(ProjectRepository::class)->findActiveOrdered(1)[0] ?? null;
         self::assertInstanceOf(Project::class, $project);
 
-        $marie = static::getContainer()->get(UserRepository::class)->findByEmail('designer1@maison.test');
+        $marie = self::getContainer()->get(UserRepository::class)->findByEmail('designer1@maison.test');
         $client->loginUser($marie);
 
         $client->request('GET', '/projets/'.$project->getReference());
@@ -72,8 +70,8 @@ final class ProjectTest extends WebTestCase
 
     public function testProjectShowReturns404WhenUnknown(): void
     {
-        $client = static::createClient();
-        $marie = static::getContainer()->get(UserRepository::class)->findByEmail('designer1@maison.test');
+        $client = self::createClient();
+        $marie = self::getContainer()->get(UserRepository::class)->findByEmail('designer1@maison.test');
         $client->loginUser($marie);
 
         $client->request('GET', '/projets/BAG-9999-999');

@@ -1,7 +1,5 @@
 <?php
 
-declare(strict_types=1);
-
 namespace App\Tests\Service;
 
 use App\Entity\Comment;
@@ -14,7 +12,7 @@ final class MentionParserTest extends KernelTestCase
     public function testParsesSingleFirstNameMention(): void
     {
         self::bootKernel();
-        $container = static::getContainer();
+        $container = self::getContainer();
         $parser = $container->get(MentionParser::class);
         $paul = $container->get(UserRepository::class)->findByEmail('joaillier1@maison.test');
         $marie = $container->get(UserRepository::class)->findByEmail('designer1@maison.test');
@@ -32,7 +30,7 @@ final class MentionParserTest extends KernelTestCase
     public function testIgnoresSelfMention(): void
     {
         self::bootKernel();
-        $container = static::getContainer();
+        $container = self::getContainer();
         $parser = $container->get(MentionParser::class);
         $marie = $container->get(UserRepository::class)->findByEmail('designer1@maison.test');
 
@@ -48,7 +46,7 @@ final class MentionParserTest extends KernelTestCase
     public function testIgnoresUnknownHandle(): void
     {
         self::bootKernel();
-        $container = static::getContainer();
+        $container = self::getContainer();
         $parser = $container->get(MentionParser::class);
         $marie = $container->get(UserRepository::class)->findByEmail('designer1@maison.test');
 
@@ -64,7 +62,7 @@ final class MentionParserTest extends KernelTestCase
     public function testParsesMultipleMentionsAndDeduplicates(): void
     {
         self::bootKernel();
-        $container = static::getContainer();
+        $container = self::getContainer();
         $parser = $container->get(MentionParser::class);
         $marie = $container->get(UserRepository::class)->findByEmail('designer1@maison.test');
 

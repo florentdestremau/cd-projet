@@ -1,16 +1,16 @@
 <?php
 
-declare(strict_types=1);
-
 namespace App\Service;
 
 use Dompdf\Dompdf;
 use Dompdf\Options;
 use Twig\Environment;
 
-final class PdfRenderer
+final readonly class PdfRenderer
 {
-    public function __construct(private readonly Environment $twig) {}
+    public function __construct(private Environment $twig)
+    {
+    }
 
     /**
      * @param array<string, mixed> $context
@@ -25,6 +25,7 @@ final class PdfRenderer
         $dompdf->loadHtml($html, 'UTF-8');
         $dompdf->setPaper('A4', 'portrait');
         $dompdf->render();
+
         return $dompdf->output();
     }
 }

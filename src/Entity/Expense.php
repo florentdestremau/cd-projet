@@ -1,7 +1,5 @@
 <?php
 
-declare(strict_types=1);
-
 namespace App\Entity;
 
 use App\Enum\ExpenseCategory;
@@ -44,19 +42,92 @@ class Expense
         $this->occurredAt = new \DateTimeImmutable();
     }
 
-    public function getId(): ?int { return $this->id; }
-    public function getProject(): ?Project { return $this->project; }
-    public function setProject(?Project $p): self { $this->project = $p; return $this; }
-    public function getCategory(): ExpenseCategory { return $this->category; }
-    public function setCategory(ExpenseCategory $c): self { $this->category = $c; return $this; }
-    public function getAmountHt(): int { return $this->amountHt; }
-    public function setAmountHt(int $a): self { $this->amountHt = $a; return $this; }
-    public function getVatAmount(): int { return $this->vatAmount; }
-    public function setVatAmount(int $v): self { $this->vatAmount = $v; return $this; }
-    public function getOccurredAt(): \DateTimeImmutable { return $this->occurredAt; }
-    public function setOccurredAt(\DateTimeImmutable $d): self { $this->occurredAt = $d; return $this; }
-    public function getDescription(): string { return $this->description; }
-    public function setDescription(string $d): self { $this->description = $d; return $this; }
-    public function getSupplierName(): ?string { return $this->supplierName; }
-    public function setSupplierName(?string $n): self { $this->supplierName = $n; return $this; }
+    public function getId(): ?int
+    {
+        return $this->id;
+    }
+
+    public function getProject(): ?Project
+    {
+        return $this->project;
+    }
+
+    public function setProject(?Project $p): self
+    {
+        $this->project = $p;
+
+        return $this;
+    }
+
+    public function getCategory(): ExpenseCategory
+    {
+        return $this->category;
+    }
+
+    public function setCategory(ExpenseCategory $c): self
+    {
+        $this->category = $c;
+
+        return $this;
+    }
+
+    public function getAmountHt(): int
+    {
+        return $this->amountHt;
+    }
+
+    public function setAmountHt(int $a): self
+    {
+        $this->amountHt = $a;
+
+        return $this;
+    }
+
+    public function getVatAmount(): int
+    {
+        return $this->vatAmount;
+    }
+
+    public function setVatAmount(int $v): self
+    {
+        $this->vatAmount = $v;
+
+        return $this;
+    }
+
+    public function getOccurredAt(): \DateTimeImmutable
+    {
+        return $this->occurredAt;
+    }
+
+    public function setOccurredAt(\DateTimeImmutable $d): self
+    {
+        $this->occurredAt = $d;
+
+        return $this;
+    }
+
+    public function getDescription(): string
+    {
+        return $this->description;
+    }
+
+    public function setDescription(string $d): self
+    {
+        $this->description = $d;
+
+        return $this;
+    }
+
+    public function getSupplierName(): ?string
+    {
+        return $this->supplierName;
+    }
+
+    public function setSupplierName(?string $n): self
+    {
+        $this->supplierName = $n;
+
+        return $this;
+    }
 }

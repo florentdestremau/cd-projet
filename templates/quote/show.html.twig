@@ -38,15 +38,15 @@
                 <tr style="border-bottom: 1px solid var(--color-line);">
                     <td style="padding: var(--space-2);">{{ item.description }}</td>
                     <td style="padding: var(--space-2); text-align: right;">{{ item.quantity }}</td>
-                    <td style="padding: var(--space-2); text-align: right; font-variant-numeric: tabular-nums;">{{ (item.unitPriceHt / 100)|format_currency('EUR', locale='fr') }}</td>
-                    <td style="padding: var(--space-2); text-align: right; font-variant-numeric: tabular-nums;">{{ (item.totalHt / 100)|format_currency('EUR', locale='fr') }}</td>
+                    <td style="padding: var(--space-2); text-align: right; font-variant-numeric: tabular-nums;">{{ (item.unitPriceHt / 100)|format_currency('EUR', locale: 'fr') }}</td>
+                    <td style="padding: var(--space-2); text-align: right; font-variant-numeric: tabular-nums;">{{ (item.totalHt / 100)|format_currency('EUR', locale: 'fr') }}</td>
                 </tr>
             {% endfor %}
             </tbody>
             <tfoot>
-                <tr><td colspan="3" style="text-align: right; padding: var(--space-3); color: var(--color-ink-muted);">Total HT</td><td style="text-align: right; padding: var(--space-3); font-variant-numeric: tabular-nums;">{{ (quote.totalHt / 100)|format_currency('EUR', locale='fr') }}</td></tr>
-                <tr><td colspan="3" style="text-align: right; padding: var(--space-3); color: var(--color-ink-muted);">TVA {{ (quote.vatRate / 100)|number_format(2, ',', ' ') }} %</td><td style="text-align: right; padding: var(--space-3); font-variant-numeric: tabular-nums;">{{ ((quote.totalTtc - quote.totalHt) / 100)|format_currency('EUR', locale='fr') }}</td></tr>
-                <tr><td colspan="3" style="text-align: right; padding: var(--space-3); font-weight: 600;">Total TTC</td><td style="text-align: right; padding: var(--space-3); font-variant-numeric: tabular-nums; font-weight: 600; font-size: var(--text-lg);">{{ (quote.totalTtc / 100)|format_currency('EUR', locale='fr') }}</td></tr>
+                <tr><td colspan="3" style="text-align: right; padding: var(--space-3); color: var(--color-ink-muted);">Total HT</td><td style="text-align: right; padding: var(--space-3); font-variant-numeric: tabular-nums;">{{ (quote.totalHt / 100)|format_currency('EUR', locale: 'fr') }}</td></tr>
+                <tr><td colspan="3" style="text-align: right; padding: var(--space-3); color: var(--color-ink-muted);">TVA {{ (quote.vatRate / 100)|number_format(2, ',', ' ') }} %</td><td style="text-align: right; padding: var(--space-3); font-variant-numeric: tabular-nums;">{{ ((quote.totalTtc - quote.totalHt) / 100)|format_currency('EUR', locale: 'fr') }}</td></tr>
+                <tr><td colspan="3" style="text-align: right; padding: var(--space-3); font-weight: 600;">Total TTC</td><td style="text-align: right; padding: var(--space-3); font-variant-numeric: tabular-nums; font-weight: 600; font-size: var(--text-lg);">{{ (quote.totalTtc / 100)|format_currency('EUR', locale: 'fr') }}</td></tr>
             </tfoot>
         </table>
     </article>

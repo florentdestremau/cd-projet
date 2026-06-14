@@ -1,7 +1,5 @@
 <?php
 
-declare(strict_types=1);
-
 namespace App\Controller;
 
 use App\Repository\SettingRepository;
@@ -33,6 +31,7 @@ final class AdminController extends AbstractController
             ]);
             $bag->clear();
             $this->addFlash('success', 'Paramètres enregistrés.');
+
             return $this->redirectToRoute('app_admin_settings');
         }
 

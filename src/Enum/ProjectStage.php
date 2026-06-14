@@ -1,7 +1,5 @@
 <?php
 
-declare(strict_types=1);
-
 namespace App\Enum;
 
 enum ProjectStage: string
@@ -53,7 +51,7 @@ enum ProjectStage: string
     public static function ordered(): array
     {
         $cases = self::cases();
-        usort($cases, fn (self $a, self $b) => $a->position() <=> $b->position());
+        usort($cases, static fn (self $a, self $b): int => $a->position() <=> $b->position());
 
         return $cases;
     }

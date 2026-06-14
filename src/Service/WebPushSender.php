@@ -1,37 +1,34 @@
 <?php
 
-declare(strict_types=1);
-
 namespace App\Service;
 
 use App\Entity\User;
-use App\Entity\UserPushSubscription;
 use App\Repository\UserPushSubscriptionRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Minishlink\WebPush\Subscription;
 use Minishlink\WebPush\WebPush;
 use Psr\Log\LoggerInterface;
 
-final class WebPushSender
+final readonly class WebPushSender
 {
     public function __construct(
-        private readonly UserPushSubscriptionRepository $repository,
-        private readonly EntityManagerInterface $em,
-        private readonly LoggerInterface $logger,
-        private readonly string $vapidPublicKey,
-        private readonly string $vapidPrivateKey,
-        private readonly string $vapidSubject,
+        private UserPushSubscriptionRepository $repository,
+        private EntityManagerInterface $em,
+        private LoggerInterface $logger,
+        private string $vapidPublicKey,
+        private string $vapidPrivateKey,
+        private string $vapidSubject,
     ) {
     }
 
     public function notify(User $user, string $title, string $body, ?string $url = null): void
     {
-        if ($this->vapidPublicKey === '' || $this->vapidPrivateKey === '') {
+        if ('' === $this->vapidPublicKey || '' === $this->vapidPrivateKey) {
             return;
         }
 
         $subscriptions = $this->repository->findForUser($user);
-        if ($subscriptions === []) {
+        if ([] === $subscriptions) {
             return;
         }
 
@@ -47,7 +44,7 @@ final class WebPushSender
             'title' => $title,
             'body' => $body,
             'url' => $url ?? '/',
-        ], JSON_THROW_ON_ERROR);
+        ], \JSON_THROW_ON_ERROR);
 
         $map = [];
         foreach ($subscriptions as $sub) {

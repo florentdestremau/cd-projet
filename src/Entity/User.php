@@ -1,7 +1,5 @@
 <?php
 
-declare(strict_types=1);
-
 namespace App\Entity;
 
 use App\Repository\UserRepository;
@@ -51,20 +49,63 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         $this->createdAt = new \DateTimeImmutable();
     }
 
-    public function getId(): ?int { return $this->id; }
-    public function getEmail(): string { return $this->email; }
-    public function setEmail(string $email): self { $this->email = $email; return $this; }
+    public function getId(): ?int
+    {
+        return $this->id;
+    }
 
-    public function getUserIdentifier(): string { return $this->email; }
+    public function getEmail(): string
+    {
+        return $this->email;
+    }
 
-    public function getPassword(): string { return $this->password; }
-    public function setPassword(string $password): self { $this->password = $password; return $this; }
+    public function setEmail(string $email): self
+    {
+        $this->email = $email;
 
-    public function getFirstName(): string { return $this->firstName; }
-    public function setFirstName(string $name): self { $this->firstName = $name; return $this; }
+        return $this;
+    }
 
-    public function getLastName(): string { return $this->lastName; }
-    public function setLastName(string $name): self { $this->lastName = $name; return $this; }
+    public function getUserIdentifier(): string
+    {
+        return $this->email;
+    }
+
+    public function getPassword(): string
+    {
+        return $this->password;
+    }
+
+    public function setPassword(string $password): self
+    {
+        $this->password = $password;
+
+        return $this;
+    }
+
+    public function getFirstName(): string
+    {
+        return $this->firstName;
+    }
+
+    public function setFirstName(string $name): self
+    {
+        $this->firstName = $name;
+
+        return $this;
+    }
+
+    public function getLastName(): string
+    {
+        return $this->lastName;
+    }
+
+    public function setLastName(string $name): self
+    {
+        $this->lastName = $name;
+
+        return $this;
+    }
 
     public function getFullName(): string
     {
@@ -98,13 +139,27 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     public function hasRole(string $role): bool
     {
-        return in_array($role, $this->getRoles(), true);
+        return \in_array($role, $this->getRoles(), true);
     }
 
-    public function getAvatar(): ?string { return $this->avatar; }
-    public function setAvatar(?string $avatar): self { $this->avatar = $avatar; return $this; }
+    public function getAvatar(): ?string
+    {
+        return $this->avatar;
+    }
 
-    public function getCreatedAt(): \DateTimeImmutable { return $this->createdAt; }
+    public function setAvatar(?string $avatar): self
+    {
+        $this->avatar = $avatar;
 
-    public function eraseCredentials(): void {}
+        return $this;
+    }
+
+    public function getCreatedAt(): \DateTimeImmutable
+    {
+        return $this->createdAt;
+    }
+
+    public function eraseCredentials(): void
+    {
+    }
 }

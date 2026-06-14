@@ -1,7 +1,5 @@
 <?php
 
-declare(strict_types=1);
-
 namespace App\Controller;
 
 use App\Entity\User;
@@ -43,12 +41,12 @@ final class NotificationController extends AbstractController
     ): JsonResponse {
         /** @var User $user */
         $user = $this->getUser();
-        $payload = json_decode($request->getContent(), true, flags: JSON_THROW_ON_ERROR);
+        $payload = json_decode($request->getContent(), true, flags: \JSON_THROW_ON_ERROR);
 
         $endpoint = $payload['endpoint'] ?? '';
         $p256dh = $payload['keys']['p256dh'] ?? '';
         $auth = $payload['keys']['auth'] ?? '';
-        if ($endpoint === '' || $p256dh === '' || $auth === '') {
+        if (\in_array('', [$endpoint, $p256dh, $auth], true)) {
             return new JsonResponse(['error' => 'missing_fields'], 400);
         }
 
@@ -77,9 +75,9 @@ final class NotificationController extends AbstractController
         UserPushSubscriptionRepository $repo,
         EntityManagerInterface $em,
     ): JsonResponse {
-        $payload = json_decode($request->getContent(), true, flags: JSON_THROW_ON_ERROR);
+        $payload = json_decode($request->getContent(), true, flags: \JSON_THROW_ON_ERROR);
         $endpoint = $payload['endpoint'] ?? '';
-        if ($endpoint === '') {
+        if ('' === $endpoint) {
             return new JsonResponse(['error' => 'missing_endpoint'], 400);
         }
         $sub = $repo->findByEndpoint($endpoint);

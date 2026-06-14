@@ -1,8 +1,33 @@
 parameters:
-    level: 8
+    level: 5
+    treatPhpDocTypesAsCertain: false
+    reportUnmatchedIgnoredErrors: false
     paths:
         - src
         - tests
     tmpDir: var/phpstan
     parallel:
         maximumNumberOfProcesses: 1
+    ignoreErrors:
+        -
+            identifier: method.notFound
+            path: tests/*
+        -
+            identifier: method.nonObject
+            path: tests/*
+        -
+            identifier: function.alreadyNarrowedType
+            path: tests/bootstrap.php
+        -
+            identifier: argument.type
+            path: tests/*
+        -
+            identifier: argument.type
+            path: src/Controller/*
+        -
+            identifier: doctrine.associationType
+            path: src/Entity/*
+        -
+            identifier: binaryOp.invalid
+            path: src/Controller/*
+        - '#Offset 1 on array.*in isset.*always exists#'

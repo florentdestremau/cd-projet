@@ -1,7 +1,5 @@
 <?php
 
-declare(strict_types=1);
-
 namespace App\Controller;
 
 use App\Entity\Project;
@@ -37,7 +35,7 @@ final class CalendarController extends AbstractController
 
         $byDay = [];
         foreach ($projects as $project) {
-            assert($project instanceof Project);
+            \assert($project instanceof Project);
             $day = (int) $project->getTargetDeliveryDate()->format('j');
             $byDay[$day][] = $project;
         }

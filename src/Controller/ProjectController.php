@@ -28,17 +28,17 @@ final class ProjectController extends AbstractController
             ->leftJoin('p.client', 'c')->addSelect('c')
             ->orderBy('p.updatedAt', 'DESC');
 
-        if ($statusFilter !== '' && ($status = ProjectStatus::tryFrom($statusFilter)) !== null) {
+        if ('' !== $statusFilter && ($status = ProjectStatus::tryFrom($statusFilter)) !== null) {
             $qb->andWhere('p.status = :status')->setParameter('status', $status);
         } else {
             $qb->andWhere('p.status = :defaultStatus')->setParameter('defaultStatus', ProjectStatus::ACTIVE);
         }
 
-        if ($stageFilter !== '' && ($stage = ProjectStage::tryFrom($stageFilter)) !== null) {
+        if ('' !== $stageFilter && ($stage = ProjectStage::tryFrom($stageFilter)) !== null) {
             $qb->andWhere('p.currentStage = :stage')->setParameter('stage', $stage);
         }
 
-        if ($search !== '') {
+        if ('' !== $search) {
             $qb->andWhere('p.title LIKE :q OR p.reference LIKE :q OR c.displayName LIKE :q')
                 ->setParameter('q', '%'.$search.'%');
         }
@@ -74,7 +74,7 @@ final class ProjectController extends AbstractController
         $comments = $commentRepository->findForProject($project);
 
         $usersHandles = array_map(
-            fn ($u) => [
+            static fn (\App\Entity\User $u): array => [
                 'handle' => strtolower($u->getFirstName()),
                 'label' => $u->getFullName(),
             ],

@@ -1,7 +1,5 @@
 <?php
 
-declare(strict_types=1);
-
 namespace App\Entity;
 
 use App\Repository\ActivityLogRepository;
@@ -40,16 +38,63 @@ class ActivityLog
         $this->createdAt = new \DateTimeImmutable();
     }
 
-    public function getId(): ?int { return $this->id; }
-    public function getProject(): ?Project { return $this->project; }
-    public function setProject(?Project $project): self { $this->project = $project; return $this; }
-    public function getActor(): ?User { return $this->actor; }
-    public function setActor(?User $user): self { $this->actor = $user; return $this; }
-    public function getEventType(): string { return $this->eventType; }
-    public function setEventType(string $type): self { $this->eventType = $type; return $this; }
+    public function getId(): ?int
+    {
+        return $this->id;
+    }
+
+    public function getProject(): ?Project
+    {
+        return $this->project;
+    }
+
+    public function setProject(?Project $project): self
+    {
+        $this->project = $project;
+
+        return $this;
+    }
+
+    public function getActor(): ?User
+    {
+        return $this->actor;
+    }
+
+    public function setActor(?User $user): self
+    {
+        $this->actor = $user;
+
+        return $this;
+    }
+
+    public function getEventType(): string
+    {
+        return $this->eventType;
+    }
+
+    public function setEventType(string $type): self
+    {
+        $this->eventType = $type;
+
+        return $this;
+    }
+
     /** @return array<string, mixed> */
-    public function getPayload(): array { return $this->payload; }
+    public function getPayload(): array
+    {
+        return $this->payload;
+    }
+
     /** @param array<string, mixed> $payload */
-    public function setPayload(array $payload): self { $this->payload = $payload; return $this; }
-    public function getCreatedAt(): \DateTimeImmutable { return $this->createdAt; }
+    public function setPayload(array $payload): self
+    {
+        $this->payload = $payload;
+
+        return $this;
+    }
+
+    public function getCreatedAt(): \DateTimeImmutable
+    {
+        return $this->createdAt;
+    }
 }

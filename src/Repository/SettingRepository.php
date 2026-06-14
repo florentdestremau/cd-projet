@@ -1,5 +1,5 @@
 <?php
-declare(strict_types=1);
+
 namespace App\Repository;
 
 use App\Entity\Setting;
@@ -19,6 +19,7 @@ class SettingRepository extends ServiceEntityRepository
     public function get(string $key, string $default = ''): string
     {
         $s = $this->find($key);
+
         return $s?->getValue() ?? $default;
     }
 

@@ -1,7 +1,5 @@
 <?php
 
-declare(strict_types=1);
-
 namespace App\DataFixtures;
 
 use App\Entity\ActivityLog;
@@ -72,10 +70,10 @@ final class AppFixtures extends Fixture
 
     private function createClientTokens(ObjectManager $manager): void
     {
-        $projects = $manager->getRepository(\App\Entity\Project::class)->findAll();
+        $projects = $manager->getRepository(Project::class)->findAll();
         foreach ($projects as $project) {
-            assert($project instanceof \App\Entity\Project);
-            if ($project->getStatus() === \App\Enum\ProjectStatus::ACTIVE && $this->faker->boolean(70)) {
+            \assert($project instanceof Project);
+            if (ProjectStatus::ACTIVE === $project->getStatus() && $this->faker->boolean(70)) {
                 $project->setClientAccessToken(bin2hex(random_bytes(32)));
             }
         }
@@ -118,7 +116,7 @@ final class AppFixtures extends Fixture
             $m->setName($name);
             $m->setType($type);
             $m->setPricePerGram($price);
-            if ($metalSuppliers !== []) {
+            if ([] !== $metalSuppliers) {
                 $m->setSupplier($this->faker->randomElement($metalSuppliers));
             }
             $manager->persist($m);
@@ -139,8 +137,8 @@ final class AppFixtures extends Fixture
                     $s->setCaratWeight($c);
                     $s->setQuality($this->faker->randomElement($qualities));
                     $s->setColor($col);
-                    $s->setCostPrice(($c * 35 + ($type === \App\Enum\StoneType::DIAMOND ? 800 : 200)) * 100);
-                    if ($stoneSuppliers !== []) {
+                    $s->setCostPrice(($c * 35 + (\App\Enum\StoneType::DIAMOND === $type ? 800 : 200)) * 100);
+                    if ([] !== $stoneSuppliers) {
                         $s->setSupplier($this->faker->randomElement($stoneSuppliers));
                     }
                     $manager->persist($s);
@@ -151,22 +149,22 @@ final class AppFixtures extends Fixture
 
     private function createFinanceData(ObjectManager $manager): void
     {
-        $projectRepo = $manager->getRepository(\App\Entity\Project::class);
+        $projectRepo = $manager->getRepository(Project::class);
         $projects = $projectRepo->findAll();
         $quoteCounter = [];
         $invoiceCounter = [];
 
         foreach ($projects as $project) {
-            assert($project instanceof \App\Entity\Project);
+            \assert($project instanceof Project);
             $year = $project->getCreatedAt()->format('Y');
             $quoteCounter[$year] = ($quoteCounter[$year] ?? 0) + 1;
 
             // Devis pour tous les projets sauf premiers stages
-            if ($project->getCurrentStage()->position() >= \App\Enum\ProjectStage::CLIENT_VALIDATION->position()
-                || $project->getStatus() === \App\Enum\ProjectStatus::DELIVERED) {
+            if ($project->getCurrentStage()->position() >= ProjectStage::CLIENT_VALIDATION->position()
+                || ProjectStatus::DELIVERED === $project->getStatus()) {
                 $quote = new \App\Entity\Quote();
                 $quote->setProject($project);
-                $quote->setReference(sprintf('DEV-%s-%03d', $year, $quoteCounter[$year]));
+                $quote->setReference(\sprintf('DEV-%s-%03d', $year, $quoteCounter[$year]));
                 $quote->setVatRate(2000);
                 $quote->setValidUntil($project->getCreatedAt()->modify('+45 days'));
                 $quote->setStatus(\App\Enum\QuoteStatus::ACCEPTED);
@@ -181,7 +179,7 @@ final class AppFixtures extends Fixture
                 foreach ($items as [$desc, $qty, $price]) {
                     $item = new \App\Entity\QuoteItem();
                     $item->setDescription($desc);
-                    $item->setQuantity((int) $qty);
+                    $item->setQuantity($qty);
                     $item->setUnitPriceHt((int) round($price / 1.20));
                     $quote->addItem($item);
                 }
@@ -191,13 +189,13 @@ final class AppFixtures extends Fixture
                 $manager->persist($quote);
 
                 // Facture pour projets livrés ou en aval
-                if ($project->getStatus() === \App\Enum\ProjectStatus::DELIVERED
-                    || $project->getCurrentStage()->position() >= \App\Enum\ProjectStage::DELIVERY->position()) {
+                if (ProjectStatus::DELIVERED === $project->getStatus()
+                    || $project->getCurrentStage()->position() >= ProjectStage::DELIVERY->position()) {
                     $invoiceCounter[$year] = ($invoiceCounter[$year] ?? 0) + 1;
                     $invoice = new \App\Entity\Invoice();
                     $invoice->setProject($project);
                     $invoice->setQuote($quote);
-                    $invoice->setReference(sprintf('FAC-%s-%03d', $year, $invoiceCounter[$year]));
+                    $invoice->setReference(\sprintf('FAC-%s-%03d', $year, $invoiceCounter[$year]));
                     $invoice->setVatRate(2000);
                     $invoice->setStatus(\App\Enum\InvoiceStatus::SENT);
                     $invoice->setSentAt($project->getDeliveredAt() ?? $project->getCreatedAt()->modify('+40 days'));
@@ -213,7 +211,7 @@ final class AppFixtures extends Fixture
                     $refInv = new \ReflectionProperty($invoice, 'createdAt');
                     $refInv->setValue($invoice, $invoice->getSentAt());
 
-                    if ($project->getStatus() === \App\Enum\ProjectStatus::DELIVERED && $this->faker->boolean(85)) {
+                    if (ProjectStatus::DELIVERED === $project->getStatus() && $this->faker->boolean(85)) {
                         $payment = new \App\Entity\Payment();
                         $payment->setInvoice($invoice);
                         $payment->setAmount($invoice->getTotalTtc());
@@ -223,7 +221,7 @@ final class AppFixtures extends Fixture
                         $invoice->setStatus(\App\Enum\InvoiceStatus::PAID);
                         $invoice->setPaidAt($payment->getReceivedAt());
                         $manager->persist($payment);
-                    } elseif ($project->getStatus() === \App\Enum\ProjectStatus::ACTIVE && $this->faker->boolean(60)) {
+                    } elseif (ProjectStatus::ACTIVE === $project->getStatus() && $this->faker->boolean(60)) {
                         // Acompte 50%
                         $payment = new \App\Entity\Payment();
                         $payment->setInvoice($invoice);
@@ -242,7 +240,7 @@ final class AppFixtures extends Fixture
             // Dépenses imputées
             $nbExpenses = $this->faker->numberBetween(2, 5);
             $categories = \App\Enum\ExpenseCategory::cases();
-            for ($i = 0; $i < $nbExpenses; $i++) {
+            for ($i = 0; $i < $nbExpenses; ++$i) {
                 $expense = new \App\Entity\Expense();
                 $expense->setProject($project);
                 $expense->setCategory($this->faker->randomElement($categories));
@@ -293,7 +291,7 @@ final class AppFixtures extends Fixture
             $user->setRoles([$role->value]);
             $user->setPassword($this->hasher->hashPassword($user, 'demo'));
             $manager->persist($user);
-            $users[$role->name.'_'.count($users)] = $user;
+            $users[$role->name.'_'.\count($users)] = $user;
         }
 
         return $users;
@@ -325,11 +323,11 @@ final class AppFixtures extends Fixture
             $clients[] = $client;
         }
 
-        for ($i = 0; $i < 65; $i++) {
+        for ($i = 0; $i < 65; ++$i) {
             $civility = $this->faker->boolean() ? 'Mme' : 'M.';
             $last = $this->faker->lastName();
             $client = new Client();
-            $client->setDisplayName(sprintf('%s %s', $civility, $last));
+            $client->setDisplayName(\sprintf('%s %s', $civility, $last));
             $client->setContactEmail($this->faker->email());
             $client->setContactPhone($this->faker->phoneNumber());
             $client->setAddress($this->faker->address());
@@ -349,10 +347,10 @@ final class AppFixtures extends Fixture
      */
     private function createProjects(ObjectManager $manager, array $users, array $clients): void
     {
-        $designers = array_values(array_filter($users, fn (User $u) => $u->hasRole(UserRole::DESIGNER->value)));
-        $jewelers = array_values(array_filter($users, fn (User $u) => $u->hasRole(UserRole::JEWELER->value)));
-        $setters = array_values(array_filter($users, fn (User $u) => $u->hasRole(UserRole::SETTER->value)));
-        $allInternal = array_values(array_filter($users, fn (User $u) => !$u->hasRole(UserRole::CLIENT->value)));
+        $designers = array_values(array_filter($users, static fn (User $u): bool => $u->hasRole(UserRole::DESIGNER->value)));
+        $jewelers = array_values(array_filter($users, static fn (User $u): bool => $u->hasRole(UserRole::JEWELER->value)));
+        $setters = array_values(array_filter($users, static fn (User $u): bool => $u->hasRole(UserRole::SETTER->value)));
+        $allInternal = array_values(array_filter($users, static fn (User $u): bool => !$u->hasRole(UserRole::CLIENT->value)));
 
         $titles = [
             'Bague solitaire diamant', 'Alliance pavée diamants', 'Bague de fiançailles trilogie',
@@ -366,9 +364,9 @@ final class AppFixtures extends Fixture
         $now = new \DateTimeImmutable();
 
         // 40 projets livrés sur 18 derniers mois
-        for ($i = 0; $i < 40; $i++) {
-            $deliveredAt = $now->modify(sprintf('-%d days', $this->faker->numberBetween(15, 540)));
-            $createdAt = $deliveredAt->modify(sprintf('-%d days', $this->faker->numberBetween(45, 120)));
+        for ($i = 0; $i < 40; ++$i) {
+            $deliveredAt = $now->modify(\sprintf('-%d days', $this->faker->numberBetween(15, 540)));
+            $createdAt = $deliveredAt->modify(\sprintf('-%d days', $this->faker->numberBetween(45, 120)));
             $project = $this->buildProject(
                 $referenceCounter++,
                 $createdAt,
@@ -402,8 +400,8 @@ final class AppFixtures extends Fixture
         ];
 
         foreach ($activeDistribution as [$stage, $count]) {
-            for ($i = 0; $i < $count; $i++) {
-                $createdAt = $now->modify(sprintf('-%d days', $this->faker->numberBetween(7, 90)));
+            for ($i = 0; $i < $count; ++$i) {
+                $createdAt = $now->modify(\sprintf('-%d days', $this->faker->numberBetween(7, 90)));
                 $project = $this->buildProject(
                     $referenceCounter++,
                     $createdAt,
@@ -413,7 +411,7 @@ final class AppFixtures extends Fixture
                     ProjectStatus::ACTIVE,
                     $stage,
                 );
-                $project->setTargetDeliveryDate($now->modify(sprintf('+%d days', $this->faker->numberBetween(7, 90))));
+                $project->setTargetDeliveryDate($now->modify(\sprintf('+%d days', $this->faker->numberBetween(7, 90))));
 
                 $this->seedStageStatuses($project, $createdAt, $now, $stage);
                 $this->seedCommentsAndActivity($manager, $project, $allInternal, $createdAt, $now);
@@ -439,7 +437,7 @@ final class AppFixtures extends Fixture
     ): Project {
         $project = new Project();
         $year = (int) $createdAt->format('Y');
-        $project->setReference(sprintf('BAG-%d-%03d', $year, $counter));
+        $project->setReference(\sprintf('BAG-%d-%03d', $year, $counter));
         $project->setTitle($title);
         $project->setClient($client);
         $project->setStatus($status);
@@ -474,12 +472,12 @@ final class AppFixtures extends Fixture
             $status->setProject($project);
 
             if ($stage->position() < $currentStage->position()) {
-                $startedAt = $from->modify(sprintf('+%d days', ($stage->position() - 1) * $perStage));
-                $completedAt = $startedAt->modify(sprintf('+%d days', $perStage));
+                $startedAt = $from->modify(\sprintf('+%d days', ($stage->position() - 1) * $perStage));
+                $completedAt = $startedAt->modify(\sprintf('+%d days', $perStage));
                 $status->setStartedAt($startedAt);
                 $status->setCompletedAt($completedAt);
             } elseif ($stage === $currentStage) {
-                $status->setStartedAt($from->modify(sprintf('+%d days', ($stage->position() - 1) * $perStage)));
+                $status->setStartedAt($from->modify(\sprintf('+%d days', ($stage->position() - 1) * $perStage)));
             }
 
             $project->addStageStatus($status);
@@ -492,9 +490,9 @@ final class AppFixtures extends Fixture
         $count = $this->faker->numberBetween(3, 8);
         $span = max(1, $from->diff($to)->days);
 
-        for ($i = 0; $i < $count; $i++) {
+        for ($i = 0; $i < $count; ++$i) {
             $author = $this->faker->randomElement($users);
-            $createdAt = $from->modify(sprintf('+%d days', $this->faker->numberBetween(0, $span)));
+            $createdAt = $from->modify(\sprintf('+%d days', $this->faker->numberBetween(0, $span)));
 
             $comment = new Comment();
             $comment->setProject($project);
@@ -525,14 +523,14 @@ final class AppFixtures extends Fixture
             $activity->setProject($project);
             $activity->setActor($author);
             $activity->setEventType('comment.created');
-            $activity->setPayload(['comment_excerpt' => mb_substr($body, 0, 100)]);
+            $activity->setPayload(['comment_excerpt' => mb_substr((string) $body, 0, 100)]);
             $refA = new \ReflectionProperty($activity, 'createdAt');
             $refA->setValue($activity, $createdAt);
             $manager->persist($activity);
         }
 
         $taskCount = $this->faker->numberBetween(2, 5);
-        for ($i = 0; $i < $taskCount; $i++) {
+        for ($i = 0; $i < $taskCount; ++$i) {
             $task = new Task();
             $task->setProject($project);
             $task->setTitle($this->faker->randomElement([
@@ -541,10 +539,10 @@ final class AppFixtures extends Fixture
             ]));
             $task->setAssignee($this->faker->randomElement($users));
             if ($this->faker->boolean(50)) {
-                $task->setCompletedAt($from->modify(sprintf('+%d days', $this->faker->numberBetween(0, $span))));
+                $task->setCompletedAt($from->modify(\sprintf('+%d days', $this->faker->numberBetween(0, $span))));
                 $task->setCompletedBy($task->getAssignee());
             } elseif ($this->faker->boolean()) {
-                $task->setDueDate($to->modify(sprintf('+%d days', $this->faker->numberBetween(0, 30))));
+                $task->setDueDate($to->modify(\sprintf('+%d days', $this->faker->numberBetween(0, 30))));
             }
             $manager->persist($task);
         }

@@ -1,7 +1,5 @@
 <?php
 
-declare(strict_types=1);
-
 use Rector\Config\RectorConfig;
 
 return RectorConfig::configure()
@@ -11,24 +9,15 @@ return RectorConfig::configure()
         __DIR__.'/src',
         __DIR__.'/tests',
     ])
-    // uncomment to reach your current PHP version
     ->withPhpSets()
-    ->withAttributesSets(symfony: true, doctrine: true, phpunit: true)
     ->withPreparedSets(
         deadCode: true,
         codeQuality: true,
-        codingStyle: true,
         typeDeclarations: true,
         privatization: true,
-        naming: true,
-        instanceOf: true,
         earlyReturn: true,
-        phpunitCodeQuality: true,
-        doctrineCodeQuality: true,
-        symfonyCodeQuality: true,
     )
     ->withImportNames(importNames: false, importDocBlockNames: false, importShortClasses: false, removeUnusedImports: true)
     ->withSkip([
-        Rector\Symfony\CodeQuality\Rector\Class_\ControllerMethodInjectionToConstructorRector::class,
         Rector\CodeQuality\Rector\Foreach_\UnusedForeachValueToArrayKeysRector::class,
     ]);

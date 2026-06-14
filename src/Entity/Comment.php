@@ -1,7 +1,5 @@
 <?php
 
-declare(strict_types=1);
-
 namespace App\Entity;
 
 use App\Repository\CommentRepository;
@@ -49,19 +47,69 @@ class Comment
         $this->mentions = new ArrayCollection();
     }
 
-    public function getId(): ?int { return $this->id; }
-    public function getProject(): ?Project { return $this->project; }
-    public function setProject(?Project $project): self { $this->project = $project; return $this; }
-    public function getAuthor(): ?User { return $this->author; }
-    public function setAuthor(?User $user): self { $this->author = $user; return $this; }
-    public function getBody(): string { return $this->body; }
-    public function setBody(string $body): self { $this->body = $body; return $this; }
-    public function getCreatedAt(): \DateTimeImmutable { return $this->createdAt; }
-    public function getEditedAt(): ?\DateTimeImmutable { return $this->editedAt; }
-    public function markEdited(): self { $this->editedAt = new \DateTimeImmutable(); return $this; }
+    public function getId(): ?int
+    {
+        return $this->id;
+    }
+
+    public function getProject(): ?Project
+    {
+        return $this->project;
+    }
+
+    public function setProject(?Project $project): self
+    {
+        $this->project = $project;
+
+        return $this;
+    }
+
+    public function getAuthor(): ?User
+    {
+        return $this->author;
+    }
+
+    public function setAuthor(?User $user): self
+    {
+        $this->author = $user;
+
+        return $this;
+    }
+
+    public function getBody(): string
+    {
+        return $this->body;
+    }
+
+    public function setBody(string $body): self
+    {
+        $this->body = $body;
+
+        return $this;
+    }
+
+    public function getCreatedAt(): \DateTimeImmutable
+    {
+        return $this->createdAt;
+    }
+
+    public function getEditedAt(): ?\DateTimeImmutable
+    {
+        return $this->editedAt;
+    }
+
+    public function markEdited(): self
+    {
+        $this->editedAt = new \DateTimeImmutable();
+
+        return $this;
+    }
 
     /** @return Collection<int, User> */
-    public function getMentions(): Collection { return $this->mentions; }
+    public function getMentions(): Collection
+    {
+        return $this->mentions;
+    }
 
     public function addMention(User $user): self
     {

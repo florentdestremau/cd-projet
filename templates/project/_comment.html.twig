@@ -1,7 +1,7 @@
 <article class="card" style="padding: var(--space-4) var(--space-5);">
     <header style="display: flex; align-items: baseline; gap: var(--space-3); margin-bottom: var(--space-2);">
         <strong>{{ comment.author.fullName }}</strong>
-        <span class="text-xs text-muted">{{ comment.createdAt|format_datetime('short', 'short', locale='fr') }}</span>
+        <span class="text-xs text-muted">{{ comment.createdAt|format_datetime('short', 'short', locale: 'fr') }}</span>
         {% if comment.mentions|length > 0 %}
             <span class="text-xs text-soft">
                 ↪ mentionne

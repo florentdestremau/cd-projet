@@ -1,7 +1,5 @@
 <?php
 
-declare(strict_types=1);
-
 namespace App\Tests\Controller;
 
 use App\Repository\UserRepository;
@@ -11,7 +9,7 @@ final class SecurityTest extends WebTestCase
 {
     public function testHomeRedirectsToLoginWhenAnonymous(): void
     {
-        $client = static::createClient();
+        $client = self::createClient();
         $client->request('GET', '/');
 
         self::assertResponseRedirects('/login');
@@ -19,7 +17,7 @@ final class SecurityTest extends WebTestCase
 
     public function testLoginPageRenders(): void
     {
-        $client = static::createClient();
+        $client = self::createClient();
         $crawler = $client->request('GET', '/login');
 
         self::assertResponseIsSuccessful();
@@ -32,8 +30,8 @@ final class SecurityTest extends WebTestCase
 
     public function testLoggedInUserSeesDashboard(): void
     {
-        $client = static::createClient();
-        $userRepository = static::getContainer()->get(UserRepository::class);
+        $client = self::createClient();
+        $userRepository = self::getContainer()->get(UserRepository::class);
         $marie = $userRepository->findByEmail('designer1@maison.test');
         self::assertNotNull($marie);
 
@@ -48,8 +46,8 @@ final class SecurityTest extends WebTestCase
 
     public function testLogoutSendsBackToLogin(): void
     {
-        $client = static::createClient();
-        $admin = static::getContainer()->get(UserRepository::class)->findByEmail('admin@maison.test');
+        $client = self::createClient();
+        $admin = self::getContainer()->get(UserRepository::class)->findByEmail('admin@maison.test');
         self::assertNotNull($admin);
         $client->loginUser($admin);
 

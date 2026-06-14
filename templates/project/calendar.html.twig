@@ -3,7 +3,7 @@
 {% block body %}
     <div class="page__header">
         <div>
-            <h1 class="page__title">{{ cursor|format_date('long', locale='fr')|capitalize }}</h1>
+            <h1 class="page__title">{{ cursor|format_date('long', locale: 'fr')|capitalize }}</h1>
             <p class="page__subtitle">Échéances de livraison des projets actifs.</p>
         </div>
         <div class="page__actions">

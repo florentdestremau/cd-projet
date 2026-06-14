@@ -1,7 +1,5 @@
 <?php
 
-declare(strict_types=1);
-
 namespace App\Repository;
 
 use App\Entity\Project;
@@ -21,7 +19,7 @@ class ProjectRepository extends ServiceEntityRepository
 
     public function generateNextReference(int $year): string
     {
-        $prefix = sprintf('BAG-%d-', $year);
+        $prefix = \sprintf('BAG-%d-', $year);
         $last = $this->createQueryBuilder('p')
             ->where('p.reference LIKE :prefix')
             ->setParameter('prefix', $prefix.'%')
@@ -32,11 +30,11 @@ class ProjectRepository extends ServiceEntityRepository
 
         $next = 1;
         if ($last instanceof Project) {
-            $suffix = (int) substr($last->getReference(), strlen($prefix));
+            $suffix = (int) substr($last->getReference(), \strlen($prefix));
             $next = $suffix + 1;
         }
 
-        return sprintf('%s%03d', $prefix, $next);
+        return \sprintf('%s%03d', $prefix, $next);
     }
 
     /** @return list<Project> */

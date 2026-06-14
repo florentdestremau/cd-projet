@@ -1,7 +1,5 @@
 <?php
 
-declare(strict_types=1);
-
 namespace App\Tests\Controller;
 
 use App\Entity\Comment;
@@ -15,8 +13,8 @@ final class CommentTest extends WebTestCase
 {
     public function testPostingCommentAttachesMention(): void
     {
-        $client = static::createClient();
-        $container = static::getContainer();
+        $client = self::createClient();
+        $container = self::getContainer();
         $project = $container->get(ProjectRepository::class)->findActiveOrdered(1)[0];
         $marie = $container->get(UserRepository::class)->findByEmail('designer1@maison.test');
         $paul = $container->get(UserRepository::class)->findByEmail('joaillier1@maison.test');
@@ -57,8 +55,8 @@ final class CommentTest extends WebTestCase
 
     public function testPostingEmptyCommentIsRejected(): void
     {
-        $client = static::createClient();
-        $container = static::getContainer();
+        $client = self::createClient();
+        $container = self::getContainer();
         $project = $container->get(ProjectRepository::class)->findActiveOrdered(1)[0];
         $marie = $container->get(UserRepository::class)->findByEmail('designer1@maison.test');
         $client->loginUser($marie);
@@ -78,8 +76,8 @@ final class CommentTest extends WebTestCase
 
     public function testPostingCommentWithoutCsrfTokenIsRejected(): void
     {
-        $client = static::createClient();
-        $container = static::getContainer();
+        $client = self::createClient();
+        $container = self::getContainer();
         $project = $container->get(ProjectRepository::class)->findActiveOrdered(1)[0];
         $marie = $container->get(UserRepository::class)->findByEmail('designer1@maison.test');
         $client->loginUser($marie);

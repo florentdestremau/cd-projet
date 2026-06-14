@@ -1,7 +1,5 @@
 <?php
 
-declare(strict_types=1);
-
 namespace App\Controller;
 
 use App\Entity\Invoice;
@@ -42,9 +40,9 @@ final class InvoiceController extends AbstractController
             $invoice->setReference($invoiceRepo->generateNextReference((int) date('Y')));
 
             $quoteRef = $request->request->getString('quote');
-            if ($quoteRef !== '') {
+            if ('' !== $quoteRef) {
                 $quote = $quoteRepo->findOneBy(['reference' => $quoteRef]);
-                if ($quote instanceof Quote && $quote->getStatus() === QuoteStatus::ACCEPTED) {
+                if ($quote instanceof Quote && QuoteStatus::ACCEPTED === $quote->getStatus()) {
                     $invoice->setQuote($quote);
                     $invoice->setVatRate($quote->getVatRate());
                     foreach ($quote->getItems() as $qi) {
@@ -62,7 +60,9 @@ final class InvoiceController extends AbstractController
                 $prices = $request->request->all('prices');
                 foreach ($descriptions as $idx => $desc) {
                     $desc = trim((string) $desc);
-                    if ($desc === '') continue;
+                    if ('' === $desc) {
+                        continue;
+                    }
                     $item = new InvoiceItem();
                     $item->setDescription($desc);
                     $item->setQuantity((int) ($quantities[$idx] ?? 1));
@@ -72,19 +72,20 @@ final class InvoiceController extends AbstractController
             }
 
             $dueDate = $request->request->getString('dueDate');
-            if ($dueDate !== '') {
+            if ('' !== $dueDate) {
                 $invoice->setDueDate(new \DateTimeImmutable($dueDate));
             }
 
             $em->persist($invoice);
             $em->flush();
             $this->addFlash('success', 'Facture '.$invoice->getReference().' créée.');
+
             return $this->redirectToRoute('app_invoices_show', ['reference' => $invoice->getReference()]);
         }
 
         $acceptedQuotes = array_filter(
             $quoteRepo->findBy(['project' => $project]),
-            fn (Quote $q) => $q->getStatus() === QuoteStatus::ACCEPTED,
+            static fn (Quote $q): bool => QuoteStatus::ACCEPTED === $q->getStatus(),
         );
 
         return $this->render('invoice/new.html.twig', [
@@ -97,7 +98,10 @@ final class InvoiceController extends AbstractController
     public function show(string $reference, InvoiceRepository $repo): Response
     {
         $invoice = $repo->findOneBy(['reference' => $reference]);
-        if (!$invoice instanceof Invoice) throw $this->createNotFoundException();
+        if (!$invoice instanceof Invoice) {
+            throw $this->createNotFoundException();
+        }
+
         return $this->render('invoice/show.html.twig', ['invoice' => $invoice, 'methods' => PaymentMethod::cases()]);
     }
 
@@ -105,19 +109,24 @@ final class InvoiceController extends AbstractController
     public function pdf(string $reference, InvoiceRepository $repo, PdfRenderer $pdf): Response
     {
         $invoice = $repo->findOneBy(['reference' => $reference]);
-        if (!$invoice instanceof Invoice) throw $this->createNotFoundException();
+        if (!$invoice instanceof Invoice) {
+            throw $this->createNotFoundException();
+        }
         $output = $pdf->render('invoice/pdf.html.twig', ['invoice' => $invoice]);
+
         return new Response($output, 200, [
             'Content-Type' => 'application/pdf',
-            'Content-Disposition' => sprintf('inline; filename="%s.pdf"', $invoice->getReference()),
+            'Content-Disposition' => \sprintf('inline; filename="%s.pdf"', $invoice->getReference()),
         ]);
     }
 
-    #[Route('/factures/{reference}/paiement', name: 'app_invoices_payment', methods: ['POST'], requirements: ['reference' => 'FAC-\d+-\d+'])]
-    public function payment(string $reference, Request $request, InvoiceRepository $repo, EntityManagerInterface $em): Response
+    #[Route('/factures/{reference}/paiement', name: 'app_invoices_payment', requirements: ['reference' => 'FAC-\d+-\d+'], methods: ['POST'])]
+    public function payment(string $reference, Request $request, InvoiceRepository $repo, EntityManagerInterface $em): \Symfony\Component\HttpFoundation\RedirectResponse
     {
         $invoice = $repo->findOneBy(['reference' => $reference]);
-        if (!$invoice instanceof Invoice) throw $this->createNotFoundException();
+        if (!$invoice instanceof Invoice) {
+            throw $this->createNotFoundException();
+        }
         if (!$this->isCsrfTokenValid('payment_'.$invoice->getId(), $request->request->getString('_token'))) {
             throw $this->createAccessDeniedException();
         }
@@ -125,6 +134,7 @@ final class InvoiceController extends AbstractController
         $amount = (int) round(((float) $request->request->getString('amount')) * 100);
         if ($amount <= 0) {
             $this->addFlash('error', 'Montant invalide.');
+
             return $this->redirectToRoute('app_invoices_show', ['reference' => $reference]);
         }
 
@@ -143,25 +153,29 @@ final class InvoiceController extends AbstractController
 
         $em->flush();
         $this->addFlash('success', 'Paiement enregistré.');
+
         return $this->redirectToRoute('app_invoices_show', ['reference' => $reference]);
     }
 
-    #[Route('/factures/{reference}/statut', name: 'app_invoices_status', methods: ['POST'], requirements: ['reference' => 'FAC-\d+-\d+'])]
-    public function status(string $reference, Request $request, InvoiceRepository $repo, EntityManagerInterface $em): Response
+    #[Route('/factures/{reference}/statut', name: 'app_invoices_status', requirements: ['reference' => 'FAC-\d+-\d+'], methods: ['POST'])]
+    public function status(string $reference, Request $request, InvoiceRepository $repo, EntityManagerInterface $em): \Symfony\Component\HttpFoundation\RedirectResponse
     {
         $invoice = $repo->findOneBy(['reference' => $reference]);
-        if (!$invoice instanceof Invoice) throw $this->createNotFoundException();
+        if (!$invoice instanceof Invoice) {
+            throw $this->createNotFoundException();
+        }
         if (!$this->isCsrfTokenValid('invoice_status_'.$invoice->getId(), $request->request->getString('_token'))) {
             throw $this->createAccessDeniedException();
         }
         $status = InvoiceStatus::tryFrom($request->request->getString('status'));
-        if ($status !== null) {
+        if (null !== $status) {
             $invoice->setStatus($status);
-            if ($status === InvoiceStatus::SENT && $invoice->getSentAt() === null) {
+            if (InvoiceStatus::SENT === $status && !$invoice->getSentAt() instanceof \DateTimeImmutable) {
                 $invoice->setSentAt(new \DateTimeImmutable());
             }
             $em->flush();
         }
+
         return $this->redirectToRoute('app_invoices_show', ['reference' => $reference]);
     }
 }

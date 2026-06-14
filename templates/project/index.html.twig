@@ -64,10 +64,10 @@
                         <span class="tag tag--gold">{{ project.currentStage.label }}</span>
                     </td>
                     <td style="padding: var(--space-3);" class="text-soft text-sm">
-                        {{ project.targetDeliveryDate ? project.targetDeliveryDate|format_date(locale='fr') : '—' }}
+                        {{ project.targetDeliveryDate ? project.targetDeliveryDate|format_date(locale: 'fr') : '—' }}
                     </td>
                     <td style="padding: var(--space-3); text-align: right; font-variant-numeric: tabular-nums;">
-                        {{ (project.sellingPrice / 100)|format_currency('EUR', locale='fr') }}
+                        {{ (project.sellingPrice / 100)|format_currency('EUR', locale: 'fr') }}
                     </td>
                 </tr>
             {% else %}

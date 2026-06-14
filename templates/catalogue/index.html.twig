@@ -26,7 +26,7 @@
                             <tr style="border-bottom: 1px solid var(--color-line);">
                                 <td style="padding: var(--space-2);">{{ m.type.label }}</td>
                                 <td style="padding: var(--space-2);">{{ m.name }}</td>
-                                <td style="padding: var(--space-2); text-align: right; font-variant-numeric: tabular-nums;">{{ (m.pricePerGram / 100)|format_currency('EUR', locale='fr') }}</td>
+                                <td style="padding: var(--space-2); text-align: right; font-variant-numeric: tabular-nums;">{{ (m.pricePerGram / 100)|format_currency('EUR', locale: 'fr') }}</td>
                                 <td style="padding: var(--space-2);" class="text-soft">{{ m.supplier ? m.supplier.name : '—' }}</td>
                             </tr>
                         {% endfor %}
@@ -72,7 +72,7 @@
                                 <td style="padding: var(--space-2); text-align: right; font-variant-numeric: tabular-nums;">{{ s.carats|number_format(3, ',', ' ') }}</td>
                                 <td style="padding: var(--space-2);" class="text-soft">{{ s.quality ?? '—' }}</td>
                                 <td style="padding: var(--space-2);" class="text-soft">{{ s.color ?? '—' }}</td>
-                                <td style="padding: var(--space-2); text-align: right; font-variant-numeric: tabular-nums;">{{ (s.costPrice / 100)|format_currency('EUR', locale='fr') }}</td>
+                                <td style="padding: var(--space-2); text-align: right; font-variant-numeric: tabular-nums;">{{ (s.costPrice / 100)|format_currency('EUR', locale: 'fr') }}</td>
                                 <td style="padding: var(--space-2);" class="text-soft">{{ s.supplier ? s.supplier.name : '—' }}</td>
                             </tr>
                         {% endfor %}

@@ -14,7 +14,7 @@ td { padding: 8px 4px; border-bottom: 1px solid #E5DFD2; }
 .footer { margin-top: 64px; color: #8A8784; font-size: 10px; text-align: center; }
 </style></head><body>
 <div class="brand">Maison · Atelier</div>
-<div class="meta">DEVIS · {{ quote.reference }} · {{ quote.createdAt|format_date('long', locale='fr') }}</div>
+<div class="meta">DEVIS · {{ quote.reference }} · {{ quote.createdAt|format_date('long', locale: 'fr') }}</div>
 
 <div class="client">
     <strong>{{ quote.project.client.displayName }}</strong>
@@ -28,16 +28,16 @@ td { padding: 8px 4px; border-bottom: 1px solid #E5DFD2; }
 <thead><tr><th>Description</th><th class="right">Qté</th><th class="right">PU HT</th><th class="right">Total HT</th></tr></thead>
 <tbody>
 {% for item in quote.items %}
-<tr><td>{{ item.description }}</td><td class="right">{{ item.quantity }}</td><td class="right">{{ (item.unitPriceHt / 100)|format_currency('EUR', locale='fr') }}</td><td class="right">{{ (item.totalHt / 100)|format_currency('EUR', locale='fr') }}</td></tr>
+<tr><td>{{ item.description }}</td><td class="right">{{ item.quantity }}</td><td class="right">{{ (item.unitPriceHt / 100)|format_currency('EUR', locale: 'fr') }}</td><td class="right">{{ (item.totalHt / 100)|format_currency('EUR', locale: 'fr') }}</td></tr>
 {% endfor %}
 </tbody>
 <tfoot>
-<tr><td colspan="3" class="right">Total HT</td><td class="right">{{ (quote.totalHt / 100)|format_currency('EUR', locale='fr') }}</td></tr>
-<tr><td colspan="3" class="right">TVA {{ (quote.vatRate / 100)|number_format(2, ',', ' ') }} %</td><td class="right">{{ ((quote.totalTtc - quote.totalHt) / 100)|format_currency('EUR', locale='fr') }}</td></tr>
-<tr><td colspan="3" class="right total">Total TTC</td><td class="right total">{{ (quote.totalTtc / 100)|format_currency('EUR', locale='fr') }}</td></tr>
+<tr><td colspan="3" class="right">Total HT</td><td class="right">{{ (quote.totalHt / 100)|format_currency('EUR', locale: 'fr') }}</td></tr>
+<tr><td colspan="3" class="right">TVA {{ (quote.vatRate / 100)|number_format(2, ',', ' ') }} %</td><td class="right">{{ ((quote.totalTtc - quote.totalHt) / 100)|format_currency('EUR', locale: 'fr') }}</td></tr>
+<tr><td colspan="3" class="right total">Total TTC</td><td class="right total">{{ (quote.totalTtc / 100)|format_currency('EUR', locale: 'fr') }}</td></tr>
 </tfoot>
 </table>
 
-{% if quote.validUntil %}<p style="margin-top: 32px; font-size: 12px;">Devis valable jusqu'au {{ quote.validUntil|format_date('long', locale='fr') }}.</p>{% endif %}
+{% if quote.validUntil %}<p style="margin-top: 32px; font-size: 12px;">Devis valable jusqu'au {{ quote.validUntil|format_date('long', locale: 'fr') }}.</p>{% endif %}
 <div class="footer">Maison · Atelier · Bijouterie luxe</div>
 </body></html>

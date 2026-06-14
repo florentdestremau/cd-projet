@@ -25,6 +25,7 @@ class ExpenseRepository extends ServiceEntityRepository
             ->select('COALESCE(SUM(e.amountHt), 0) AS total')
             ->where('e.project = :p')->setParameter('p', $project)
             ->getQuery()->getSingleResult();
+
         return (int) $r['total'];
     }
 }

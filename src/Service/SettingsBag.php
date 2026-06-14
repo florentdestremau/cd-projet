@@ -1,5 +1,5 @@
 <?php
-declare(strict_types=1);
+
 namespace App\Service;
 
 use App\Repository\SettingRepository;
@@ -15,12 +15,13 @@ final class SettingsBag
 
     public function get(string $key, string $default = ''): string
     {
-        if ($this->cache === null) {
+        if (null === $this->cache) {
             $this->cache = [];
             foreach ($this->repo->findAll() as $setting) {
                 $this->cache[$setting->getKey()] = (string) $setting->getValue();
             }
         }
+
         return $this->cache[$key] ?? $default;
     }
 

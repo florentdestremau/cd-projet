@@ -16,13 +16,13 @@
     <div class="grid-3" style="margin-bottom: var(--space-7);">
         <article class="card">
             <h6>Chiffre d'affaires du mois</h6>
-            <p style="font-family: var(--font-serif); font-size: var(--text-3xl); margin: var(--space-3) 0;">{{ (ca_month / 100)|format_currency('EUR', locale='fr') }}</p>
+            <p style="font-family: var(--font-serif); font-size: var(--text-3xl); margin: var(--space-3) 0;">{{ (ca_month / 100)|format_currency('EUR', locale: 'fr') }}</p>
             <p class="text-xs text-muted">Factures payées ce mois.</p>
         </article>
         <article class="card">
             <h6>Factures en retard</h6>
             <p style="font-family: var(--font-serif); font-size: var(--text-3xl); margin: var(--space-3) 0;">{{ overdue|length }}</p>
-            <p class="text-xs text-muted">Solde dû : {{ (overdue_total / 100)|format_currency('EUR', locale='fr') }}</p>
+            <p class="text-xs text-muted">Solde dû : {{ (overdue_total / 100)|format_currency('EUR', locale: 'fr') }}</p>
         </article>
         <article class="card">
             <h6>Export comptable</h6>
@@ -47,8 +47,8 @@
                         <td style="padding: var(--space-2);"><a href="{{ path('app_invoices_show', {reference: inv.reference}) }}">{{ inv.reference }}</a></td>
                         <td style="padding: var(--space-2);">{{ inv.project.reference }}</td>
                         <td style="padding: var(--space-2);" class="text-soft">{{ inv.project.client.displayName }}</td>
-                        <td style="padding: var(--space-2);" class="text-soft">{{ inv.dueDate|format_date('short', locale='fr') }}</td>
-                        <td style="padding: var(--space-2); text-align: right; font-variant-numeric: tabular-nums;">{{ (inv.balanceDue / 100)|format_currency('EUR', locale='fr') }}</td>
+                        <td style="padding: var(--space-2);" class="text-soft">{{ inv.dueDate|format_date('short', locale: 'fr') }}</td>
+                        <td style="padding: var(--space-2); text-align: right; font-variant-numeric: tabular-nums;">{{ (inv.balanceDue / 100)|format_currency('EUR', locale: 'fr') }}</td>
                     </tr>
                 {% endfor %}
                 </tbody>

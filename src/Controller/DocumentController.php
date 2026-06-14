@@ -1,7 +1,5 @@
 <?php
 
-declare(strict_types=1);
-
 namespace App\Controller;
 
 use App\Entity\Document;
@@ -15,7 +13,6 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 use Symfony\Component\Routing\Attribute\Route;
 
@@ -29,11 +26,11 @@ final class DocumentController extends AbstractController
 
     private function storageDir(): string
     {
-        return $this->uploadDir !== '' ? $this->uploadDir : dirname(__DIR__, 2).'/var/uploads';
+        return '' !== $this->uploadDir ? $this->uploadDir : \dirname(__DIR__, 2).'/var/uploads';
     }
 
-    #[Route('/projets/{reference}/documents', name: 'app_documents_create', methods: ['POST'], requirements: ['reference' => 'BAG-\d+-\d+'])]
-    public function upload(string $reference, Request $request, ProjectRepository $projectRepo, EntityManagerInterface $em): Response
+    #[Route('/projets/{reference}/documents', name: 'app_documents_create', requirements: ['reference' => 'BAG-\d+-\d+'], methods: ['POST'])]
+    public function upload(string $reference, Request $request, ProjectRepository $projectRepo, EntityManagerInterface $em): \Symfony\Component\HttpFoundation\RedirectResponse
     {
         $project = $projectRepo->findOneBy(['reference' => $reference]);
         if (!$project instanceof Project) {
@@ -44,8 +41,9 @@ final class DocumentController extends AbstractController
         }
 
         $file = $request->files->get('file');
-        if ($file === null) {
+        if (null === $file) {
             $this->addFlash('error', 'Aucun fichier reçu.');
+
             return $this->redirectToRoute('app_projects_show', ['reference' => $reference]);
         }
 
@@ -55,7 +53,7 @@ final class DocumentController extends AbstractController
         }
 
         $original = $file->getClientOriginalName();
-        $safe = bin2hex(random_bytes(8)).'_'.preg_replace('/[^A-Za-z0-9._-]/', '_', $original);
+        $safe = bin2hex(random_bytes(8)).'_'.preg_replace('/[^A-Za-z0-9._-]/', '_', (string) $original);
         $file->move($projectDir, $safe);
 
         $doc = new Document();
@@ -72,11 +70,12 @@ final class DocumentController extends AbstractController
         $em->flush();
 
         $this->addFlash('success', 'Document ajouté.');
+
         return $this->redirectToRoute('app_projects_show', ['reference' => $reference]);
     }
 
     #[Route('/documents/{id}', name: 'app_documents_download', requirements: ['id' => '\d+'])]
-    public function download(int $id, DocumentRepository $repo): Response
+    public function download(int $id, DocumentRepository $repo): BinaryFileResponse
     {
         $doc = $repo->find($id);
         if (!$doc instanceof Document) {
@@ -91,11 +90,12 @@ final class DocumentController extends AbstractController
         if (!$doc->isImage()) {
             $response->setContentDisposition(ResponseHeaderBag::DISPOSITION_ATTACHMENT, $doc->getFilename());
         }
+
         return $response;
     }
 
-    #[Route('/documents/{id}/supprimer', name: 'app_documents_delete', methods: ['POST'], requirements: ['id' => '\d+'])]
-    public function delete(int $id, Request $request, DocumentRepository $repo, EntityManagerInterface $em): Response
+    #[Route('/documents/{id}/supprimer', name: 'app_documents_delete', requirements: ['id' => '\d+'], methods: ['POST'])]
+    public function delete(int $id, Request $request, DocumentRepository $repo, EntityManagerInterface $em): \Symfony\Component\HttpFoundation\RedirectResponse
     {
         $doc = $repo->find($id);
         if (!$doc instanceof Document) {
@@ -112,6 +112,7 @@ final class DocumentController extends AbstractController
         $em->remove($doc);
         $em->flush();
         $this->addFlash('success', 'Document supprimé.');
+
         return $this->redirectToRoute('app_projects_show', ['reference' => $projectRef]);
     }
 }

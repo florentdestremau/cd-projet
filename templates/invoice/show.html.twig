@@ -7,7 +7,7 @@
                 <a href="{{ path('app_projects_show', {reference: invoice.project.reference}) }}">{{ invoice.project.reference }}</a> · {{ invoice.project.title }}
             </p>
             <h1 class="page__title">{{ invoice.reference }}</h1>
-            <p class="page__subtitle">Facture <strong>{{ invoice.status.label|lower }}</strong>{% if invoice.dueDate %} · échéance {{ invoice.dueDate|format_date('long', locale='fr') }}{% endif %}</p>
+            <p class="page__subtitle">Facture <strong>{{ invoice.status.label|lower }}</strong>{% if invoice.dueDate %} · échéance {{ invoice.dueDate|format_date('long', locale: 'fr') }}{% endif %}</p>
         </div>
         <div class="page__actions">
             <a href="{{ path('app_invoices_pdf', {reference: invoice.reference}) }}" class="btn btn--secondary" target="_blank">PDF</a>
@@ -34,15 +34,15 @@
                     <tr style="border-bottom: 1px solid var(--color-line);">
                         <td style="padding: var(--space-2);">{{ item.description }}</td>
                         <td style="padding: var(--space-2); text-align: right;">{{ item.quantity }}</td>
-                        <td style="padding: var(--space-2); text-align: right; font-variant-numeric: tabular-nums;">{{ (item.unitPriceHt / 100)|format_currency('EUR', locale='fr') }}</td>
-                        <td style="padding: var(--space-2); text-align: right; font-variant-numeric: tabular-nums;">{{ (item.totalHt / 100)|format_currency('EUR', locale='fr') }}</td>
+                        <td style="padding: var(--space-2); text-align: right; font-variant-numeric: tabular-nums;">{{ (item.unitPriceHt / 100)|format_currency('EUR', locale: 'fr') }}</td>
+                        <td style="padding: var(--space-2); text-align: right; font-variant-numeric: tabular-nums;">{{ (item.totalHt / 100)|format_currency('EUR', locale: 'fr') }}</td>
                     </tr>
                 {% endfor %}
                 </tbody>
                 <tfoot>
-                    <tr><td colspan="3" style="text-align: right; padding: var(--space-3); color: var(--color-ink-muted);">Total HT</td><td style="text-align: right; padding: var(--space-3); font-variant-numeric: tabular-nums;">{{ (invoice.totalHt / 100)|format_currency('EUR', locale='fr') }}</td></tr>
-                    <tr><td colspan="3" style="text-align: right; padding: var(--space-3); color: var(--color-ink-muted);">TVA {{ (invoice.vatRate / 100)|number_format(2, ',', ' ') }} %</td><td style="text-align: right; padding: var(--space-3); font-variant-numeric: tabular-nums;">{{ ((invoice.totalTtc - invoice.totalHt) / 100)|format_currency('EUR', locale='fr') }}</td></tr>
-                    <tr><td colspan="3" style="text-align: right; padding: var(--space-3); font-weight: 600;">Total TTC</td><td style="text-align: right; padding: var(--space-3); font-variant-numeric: tabular-nums; font-weight: 600; font-size: var(--text-lg);">{{ (invoice.totalTtc / 100)|format_currency('EUR', locale='fr') }}</td></tr>
+                    <tr><td colspan="3" style="text-align: right; padding: var(--space-3); color: var(--color-ink-muted);">Total HT</td><td style="text-align: right; padding: var(--space-3); font-variant-numeric: tabular-nums;">{{ (invoice.totalHt / 100)|format_currency('EUR', locale: 'fr') }}</td></tr>
+                    <tr><td colspan="3" style="text-align: right; padding: var(--space-3); color: var(--color-ink-muted);">TVA {{ (invoice.vatRate / 100)|number_format(2, ',', ' ') }} %</td><td style="text-align: right; padding: var(--space-3); font-variant-numeric: tabular-nums;">{{ ((invoice.totalTtc - invoice.totalHt) / 100)|format_currency('EUR', locale: 'fr') }}</td></tr>
+                    <tr><td colspan="3" style="text-align: right; padding: var(--space-3); font-weight: 600;">Total TTC</td><td style="text-align: right; padding: var(--space-3); font-variant-numeric: tabular-nums; font-weight: 600; font-size: var(--text-lg);">{{ (invoice.totalTtc / 100)|format_currency('EUR', locale: 'fr') }}</td></tr>
                 </tfoot>
             </table>
         </article>
@@ -54,8 +54,8 @@
                     <ul style="list-style: none; padding: 0; margin: 0;">
                         {% for p in invoice.payments %}
                             <li style="padding: var(--space-2) 0; border-bottom: 1px solid var(--color-line); display: flex; justify-content: space-between;">
-                                <span class="text-sm">{{ p.receivedAt|format_date('short', locale='fr') }} · {{ p.method.label }}</span>
-                                <strong style="font-variant-numeric: tabular-nums;">{{ (p.amount / 100)|format_currency('EUR', locale='fr') }}</strong>
+                                <span class="text-sm">{{ p.receivedAt|format_date('short', locale: 'fr') }} · {{ p.method.label }}</span>
+                                <strong style="font-variant-numeric: tabular-nums;">{{ (p.amount / 100)|format_currency('EUR', locale: 'fr') }}</strong>
                             </li>
                         {% endfor %}
                     </ul>
@@ -63,8 +63,8 @@
                     <p class="text-muted">Aucun paiement.</p>
                 {% endif %}
                 <p style="margin-top: var(--space-3); font-size: var(--text-sm);">
-                    <span class="text-muted">Reçu&nbsp;:</span> {{ (invoice.amountPaid / 100)|format_currency('EUR', locale='fr') }}<br>
-                    <span class="text-muted">Solde dû&nbsp;:</span> <strong>{{ (invoice.balanceDue / 100)|format_currency('EUR', locale='fr') }}</strong>
+                    <span class="text-muted">Reçu&nbsp;:</span> {{ (invoice.amountPaid / 100)|format_currency('EUR', locale: 'fr') }}<br>
+                    <span class="text-muted">Solde dû&nbsp;:</span> <strong>{{ (invoice.balanceDue / 100)|format_currency('EUR', locale: 'fr') }}</strong>
                 </p>
             </article>
 

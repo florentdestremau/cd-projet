@@ -1,7 +1,5 @@
 <?php
 
-declare(strict_types=1);
-
 namespace App\Tests\Controller;
 
 use App\Entity\Project;
@@ -13,8 +11,8 @@ final class PortalTest extends WebTestCase
 {
     public function testPortalRendersWithoutAuth(): void
     {
-        $client = static::createClient();
-        $project = static::getContainer()->get(ProjectRepository::class)
+        $client = self::createClient();
+        $project = self::getContainer()->get(ProjectRepository::class)
             ->createQueryBuilder('p')
             ->where('p.clientAccessToken IS NOT NULL')
             ->andWhere('p.status = :s')->setParameter('s', ProjectStatus::ACTIVE)
@@ -29,15 +27,15 @@ final class PortalTest extends WebTestCase
 
     public function testPortalRefuses404OnUnknownToken(): void
     {
-        $client = static::createClient();
+        $client = self::createClient();
         $client->request('GET', '/portail/'.str_repeat('a', 64));
         self::assertResponseStatusCodeSame(404);
     }
 
     public function testAdminSettingsRequiresAdminRole(): void
     {
-        $client = static::createClient();
-        $designer = static::getContainer()->get(\App\Repository\UserRepository::class)->findByEmail('designer1@maison.test');
+        $client = self::createClient();
+        $designer = self::getContainer()->get(\App\Repository\UserRepository::class)->findByEmail('designer1@maison.test');
         $client->loginUser($designer);
         $client->request('GET', '/admin/parametres');
         self::assertResponseStatusCodeSame(403);
@@ -45,11 +43,11 @@ final class PortalTest extends WebTestCase
 
     public function testAdminSettingsAccessibleForAdmin(): void
     {
-        $client = static::createClient();
-        $admin = static::getContainer()->get(\App\Repository\UserRepository::class)->findByEmail('admin@maison.test');
+        $client = self::createClient();
+        $admin = self::getContainer()->get(\App\Repository\UserRepository::class)->findByEmail('admin@maison.test');
         $client->loginUser($admin);
         $client->request('GET', '/admin/parametres');
         self::assertResponseIsSuccessful();
-        self::assertSelectorTextContains('h1', "Paramètres");
+        self::assertSelectorTextContains('h1', 'Paramètres');
     }
 }
