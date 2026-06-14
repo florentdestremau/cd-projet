@@ -29,12 +29,12 @@ COPY --from=composer /usr/bin/composer /usr/bin/composer
 ENV APP_ENV=prod APP_DEBUG=0 APP_SECRET=buildsecret
 
 COPY --link composer.json composer.lock symfony.lock ./
-RUN composer install --no-dev --no-scripts --prefer-dist --no-progress && \
+RUN composer install --no-scripts --prefer-dist --no-progress && \
     rm -rf ~/.composer/cache
 
 COPY --link . .
 
-RUN composer dump-autoload --optimize --no-dev && \
+RUN composer dump-autoload --optimize && \
     php bin/console importmap:install && \
     php bin/console asset-map:compile && \
     php bin/console cache:warmup --env=prod
