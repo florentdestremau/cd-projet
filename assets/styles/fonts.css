@@ -1,0 +1,25 @@
+/* Cormorant Garamond — latin subset, weights 400/500/600 */
+@font-face {
+    font-family: 'Cormorant Garamond';
+    font-style: normal;
+    font-weight: 400 600;
+    font-display: swap;
+    src: url('../fonts/cormorant-garamond-latin.woff2') format('woff2');
+}
+
+@font-face {
+    font-family: 'Cormorant Garamond';
+    font-style: italic;
+    font-weight: 500;
+    font-display: swap;
+    src: url('../fonts/cormorant-garamond-italic-500-latin.woff') format('woff');
+}
+
+/* Inter — latin subset, weights 400/500/600 */
+@font-face {
+    font-family: 'Inter';
+    font-style: normal;
+    font-weight: 400 600;
+    font-display: swap;
+    src: url('../fonts/inter-latin.woff2') format('woff2');
+}
