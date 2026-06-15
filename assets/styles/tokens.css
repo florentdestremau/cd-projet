@@ -1,18 +1,19 @@
 :root {
-    --color-ivory: #FAF8F3;
-    --color-paper: #F5F2EB;
-    --color-ink: #1A1A1A;
-    --color-ink-soft: #4A4A48;
-    --color-ink-muted: #8A8784;
-    --color-line: #E5DFD2;
+    --color-ivory: #F7F3E9;
+    --color-paper: #EDE6D3;
+    --color-ink: #0A0A0A;
+    --color-ink-soft: #2A2A28;
+    --color-ink-muted: #6B6862;
+    --color-line: #C9BFA8;
+    --color-line-strong: #8E7E60;
 
-    --color-gold: #B8935A;
-    --color-gold-soft: #D4B584;
-    --color-gold-deep: #8E6E3E;
+    --color-gold: #9B6F2E;
+    --color-gold-soft: #C49856;
+    --color-gold-deep: #5E3F12;
 
-    --color-success: #5B7A52;
-    --color-warning: #B07A2E;
-    --color-danger: #8E3B3B;
+    --color-success: #3D5C30;
+    --color-warning: #8E5A12;
+    --color-danger: #6B1A1A;
 
     --font-serif: "Cormorant Garamond", "EB Garamond", Georgia, serif;
     --font-sans: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;

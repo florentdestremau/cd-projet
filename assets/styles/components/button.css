@@ -14,9 +14,10 @@
 }
 
 .btn--primary {
-    background-color: var(--color-gold);
+    background-color: var(--color-ink);
     color: var(--color-ivory);
-    border: 1px solid var(--color-gold);
+    border: 1px solid var(--color-ink);
+    font-weight: 600;
 }
 
 .btn--primary:hover {
@@ -25,13 +26,15 @@
 }
 
 .btn--secondary {
-    background-color: transparent;
+    background-color: var(--color-ivory);
     color: var(--color-ink);
-    border: 1px solid var(--color-ink-soft);
+    border: 1px solid var(--color-ink);
+    font-weight: 500;
 }
 
 .btn--secondary:hover {
-    background-color: var(--color-paper);
+    background-color: var(--color-ink);
+    color: var(--color-ivory);
     border-color: var(--color-ink);
 }
 
