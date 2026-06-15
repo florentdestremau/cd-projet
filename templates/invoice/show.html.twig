@@ -71,15 +71,14 @@
             {% if invoice.balanceDue > 0 %}
                 <article class="card">
                     <h3 class="card__title">Enregistrer un paiement</h3>
-                    <form method="post" action="{{ path('app_invoices_payment', {reference: invoice.reference}) }}" class="stack">
-                        <input type="hidden" name="_token" value="{{ csrf_token('payment_' ~ invoice.id) }}">
-                        <input type="number" name="amount" step="0.01" required placeholder="Montant" style="width: 100%; padding: var(--space-2); border: 1px solid var(--color-line); border-radius: var(--radius-sm); background: var(--color-ivory);">
-                        <select name="method" style="width: 100%; padding: var(--space-2); border: 1px solid var(--color-line); border-radius: var(--radius-sm); background: var(--color-ivory);">
-                            {% for m in methods %}<option value="{{ m.value }}">{{ m.label }}</option>{% endfor %}
-                        </select>
-                        <input type="text" name="reference" placeholder="Référence (optionnel)" style="width: 100%; padding: var(--space-2); border: 1px solid var(--color-line); border-radius: var(--radius-sm); background: var(--color-ivory);">
-                        <button type="submit" class="btn btn--primary">Enregistrer</button>
-                    </form>
+                    {{ form_start(payment_form, {action: path('app_invoices_payment', {reference: invoice.reference}), attr: {class: 'form'}}) }}
+                        {{ form_row(payment_form.amount) }}
+                        {{ form_row(payment_form.method) }}
+                        {{ form_row(payment_form.reference) }}
+                        <div class="form__actions">
+                            <button type="submit" class="btn btn--primary">Enregistrer</button>
+                        </div>
+                    {{ form_end(payment_form) }}
                 </article>
             {% endif %}
         </aside>

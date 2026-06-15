@@ -51,24 +51,15 @@
                 {% endfor %}
             </div>
 
-            <form method="post" action="{{ path('app_comments_create', {reference: project.reference}) }}"
-                  class="card"
-                  data-controller="mention-autocomplete"
-                  data-mention-autocomplete-users-value="{{ users_handles|json_encode }}">
-                <input type="hidden" name="_token" value="{{ csrf_token('comment_' ~ project.id) }}">
-                <label class="text-xs text-muted" style="display: block; letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: var(--space-2);">
-                    Nouveau message
-                </label>
-                <textarea name="body" rows="3" required
-                          data-mention-autocomplete-target="input"
-                          placeholder="Écrire… utilisez @prenom pour mentionner quelqu'un."
-                          style="width: 100%; padding: var(--space-3); border: 1px solid var(--color-line); border-radius: var(--radius-sm); background-color: var(--color-ivory); font-family: var(--font-sans); resize: vertical;"></textarea>
-                <div data-mention-autocomplete-target="suggestions"
-                     style="display: none; margin-top: var(--space-2); border: 1px solid var(--color-line); border-radius: var(--radius-sm); max-height: 180px; overflow-y: auto; background: var(--color-ivory);"></div>
-                <div style="display: flex; justify-content: flex-end; margin-top: var(--space-3);">
+            {{ form_start(comment_form, {action: path('app_comments_create', {reference: project.reference}), attr: {class: 'card form', 'data-controller': 'mention-autocomplete', 'data-mention-autocomplete-users-value': users_handles|json_encode}}) }}
+                {{ form_label(comment_form.body) }}
+                {{ form_widget(comment_form.body, {attr: {'data-mention-autocomplete-target': 'input'}}) }}
+                <div data-mention-autocomplete-target="suggestions" class="mention-suggestions" hidden></div>
+                {{ form_errors(comment_form.body) }}
+                <div class="form__actions">
                     <button type="submit" class="btn btn--primary">Envoyer</button>
                 </div>
-            </form>
+            {{ form_end(comment_form) }}
         </section>
 
         <aside class="stack">
@@ -125,19 +116,19 @@
                         {% endfor %}
                     </ul>
                 {% endif %}
-                <details style="margin-top: var(--space-3);">
-                    <summary class="text-sm text-muted" style="cursor: pointer;">+ Ajouter une dépense</summary>
-                    <form method="post" action="{{ path('app_expenses_create', {reference: project.reference}) }}" class="stack" style="margin-top: var(--space-3);">
-                        <input type="hidden" name="_token" value="{{ csrf_token('expense_' ~ project.id) }}">
-                        <input type="text" name="description" placeholder="Description" required style="padding: var(--space-2); border: 1px solid var(--color-line); border-radius: var(--radius-sm); background: var(--color-ivory);">
-                        <input type="text" name="supplier" placeholder="Fournisseur" style="padding: var(--space-2); border: 1px solid var(--color-line); border-radius: var(--radius-sm); background: var(--color-ivory);">
-                        <select name="category" style="padding: var(--space-2); border: 1px solid var(--color-line); border-radius: var(--radius-sm); background: var(--color-ivory);">
-                            {% for c in expense_categories %}<option value="{{ c.value }}">{{ c.label }}</option>{% endfor %}
-                        </select>
-                        <input type="number" step="0.01" name="amountHt" placeholder="Montant HT" required style="padding: var(--space-2); border: 1px solid var(--color-line); border-radius: var(--radius-sm); background: var(--color-ivory);">
-                        <input type="date" name="occurredAt" style="padding: var(--space-2); border: 1px solid var(--color-line); border-radius: var(--radius-sm); background: var(--color-ivory);">
-                        <button type="submit" class="btn btn--secondary">Enregistrer</button>
-                    </form>
+                <details class="form__details">
+                    <summary class="form__summary">+ Ajouter une dépense</summary>
+                    {{ form_start(expense_form, {action: path('app_expenses_create', {reference: project.reference}), attr: {class: 'form'}}) }}
+                        {{ form_row(expense_form.description) }}
+                        {{ form_row(expense_form.supplierName) }}
+                        {{ form_row(expense_form.category) }}
+                        {{ form_row(expense_form.amountHt) }}
+                        {{ form_row(expense_form.vatAmount) }}
+                        {{ form_row(expense_form.occurredAt) }}
+                        <div class="form__actions">
+                            <button type="submit" class="btn btn--secondary">Enregistrer</button>
+                        </div>
+                    {{ form_end(expense_form) }}
                 </details>
             </article>
 

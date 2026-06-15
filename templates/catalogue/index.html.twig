@@ -9,7 +9,6 @@
     </div>
 
     <div class="stack stack--lg">
-
         <section>
             <h2>Matières ({{ materials|length }})</h2>
             <article class="card" style="margin-top: var(--space-3);">
@@ -33,21 +32,17 @@
                         </tbody>
                     </table>
                 {% endif %}
-                <details style="margin-top: var(--space-4);">
-                    <summary class="text-sm text-muted" style="cursor: pointer;">+ Ajouter une matière</summary>
-                    <form method="post" action="{{ path('app_catalogues_material_create') }}" class="grid-3" style="margin-top: var(--space-3); gap: var(--space-3);">
-                        <input type="hidden" name="_token" value="{{ csrf_token('catalogue_material') }}">
-                        <input type="text" name="name" placeholder="Nom" required style="padding: var(--space-2); border: 1px solid var(--color-line); border-radius: var(--radius-sm);">
-                        <select name="type" style="padding: var(--space-2); border: 1px solid var(--color-line); border-radius: var(--radius-sm);">
-                            {% for t in material_types %}<option value="{{ t.value }}">{{ t.label }}</option>{% endfor %}
-                        </select>
-                        <input type="number" step="0.01" name="pricePerGram" placeholder="€/g" required style="padding: var(--space-2); border: 1px solid var(--color-line); border-radius: var(--radius-sm);">
-                        <select name="supplier" style="padding: var(--space-2); border: 1px solid var(--color-line); border-radius: var(--radius-sm);">
-                            <option value="">— Fournisseur —</option>
-                            {% for s in suppliers %}<option value="{{ s.id }}">{{ s.name }}</option>{% endfor %}
-                        </select>
-                        <button type="submit" class="btn btn--secondary" style="grid-column: span 2;">Ajouter</button>
-                    </form>
+                <details class="form__details">
+                    <summary class="form__summary">+ Ajouter une matière</summary>
+                    {{ form_start(material_form, {action: path('app_catalogues_material_create'), attr: {class: 'form'}}) }}
+                        {{ form_row(material_form.name) }}
+                        {{ form_row(material_form.type) }}
+                        {{ form_row(material_form.pricePerGram) }}
+                        {{ form_row(material_form.supplier) }}
+                        <div class="form__actions">
+                            <button type="submit" class="btn btn--secondary">Ajouter</button>
+                        </div>
+                    {{ form_end(material_form) }}
                 </details>
             </article>
         </section>
@@ -79,23 +74,20 @@
                         </tbody>
                     </table>
                 {% endif %}
-                <details style="margin-top: var(--space-4);">
-                    <summary class="text-sm text-muted" style="cursor: pointer;">+ Ajouter une pierre</summary>
-                    <form method="post" action="{{ path('app_catalogues_stone_create') }}" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--space-3); margin-top: var(--space-3);">
-                        <input type="hidden" name="_token" value="{{ csrf_token('catalogue_stone') }}">
-                        <select name="type" style="padding: var(--space-2); border: 1px solid var(--color-line); border-radius: var(--radius-sm);">
-                            {% for t in stone_types %}<option value="{{ t.value }}">{{ t.label }}</option>{% endfor %}
-                        </select>
-                        <input type="number" step="0.001" name="carats" placeholder="Carats" required style="padding: var(--space-2); border: 1px solid var(--color-line); border-radius: var(--radius-sm);">
-                        <input type="text" name="quality" placeholder="Qualité (ex: VVS1)" style="padding: var(--space-2); border: 1px solid var(--color-line); border-radius: var(--radius-sm);">
-                        <input type="text" name="color" placeholder="Couleur (ex: D, bleu Ceylan)" style="padding: var(--space-2); border: 1px solid var(--color-line); border-radius: var(--radius-sm);">
-                        <input type="number" step="0.01" name="cost" placeholder="Coût €" required style="padding: var(--space-2); border: 1px solid var(--color-line); border-radius: var(--radius-sm);">
-                        <select name="supplier" style="padding: var(--space-2); border: 1px solid var(--color-line); border-radius: var(--radius-sm);">
-                            <option value="">— Fournisseur —</option>
-                            {% for s in suppliers %}<option value="{{ s.id }}">{{ s.name }}</option>{% endfor %}
-                        </select>
-                        <button type="submit" class="btn btn--secondary" style="grid-column: span 3;">Ajouter</button>
-                    </form>
+                <details class="form__details">
+                    <summary class="form__summary">+ Ajouter une pierre</summary>
+                    {{ form_start(stone_form, {action: path('app_catalogues_stone_create'), attr: {class: 'form'}}) }}
+                        {{ form_row(stone_form.type) }}
+                        {{ form_row(stone_form.caratWeight) }}
+                        {{ form_row(stone_form.quality) }}
+                        {{ form_row(stone_form.color) }}
+                        {{ form_row(stone_form.certificateRef) }}
+                        {{ form_row(stone_form.costPrice) }}
+                        {{ form_row(stone_form.supplier) }}
+                        <div class="form__actions">
+                            <button type="submit" class="btn btn--secondary">Ajouter</button>
+                        </div>
+                    {{ form_end(stone_form) }}
                 </details>
             </article>
         </section>
@@ -121,18 +113,18 @@
                         </tbody>
                     </table>
                 {% endif %}
-                <details style="margin-top: var(--space-4);">
-                    <summary class="text-sm text-muted" style="cursor: pointer;">+ Ajouter un fournisseur</summary>
-                    <form method="post" action="{{ path('app_catalogues_supplier_create') }}" style="display: grid; grid-template-columns: repeat(2, 1fr); gap: var(--space-3); margin-top: var(--space-3);">
-                        <input type="hidden" name="_token" value="{{ csrf_token('catalogue_supplier') }}">
-                        <input type="text" name="name" placeholder="Nom" required style="padding: var(--space-2); border: 1px solid var(--color-line); border-radius: var(--radius-sm);">
-                        <select name="specialty" style="padding: var(--space-2); border: 1px solid var(--color-line); border-radius: var(--radius-sm);">
-                            {% for sp in supplier_specialties %}<option value="{{ sp.value }}">{{ sp.label }}</option>{% endfor %}
-                        </select>
-                        <input type="email" name="contactEmail" placeholder="Email" style="padding: var(--space-2); border: 1px solid var(--color-line); border-radius: var(--radius-sm);">
-                        <input type="text" name="contactPhone" placeholder="Téléphone" style="padding: var(--space-2); border: 1px solid var(--color-line); border-radius: var(--radius-sm);">
-                        <button type="submit" class="btn btn--secondary" style="grid-column: span 2;">Ajouter</button>
-                    </form>
+                <details class="form__details">
+                    <summary class="form__summary">+ Ajouter un fournisseur</summary>
+                    {{ form_start(supplier_form, {action: path('app_catalogues_supplier_create'), attr: {class: 'form'}}) }}
+                        {{ form_row(supplier_form.name) }}
+                        {{ form_row(supplier_form.specialty) }}
+                        {{ form_row(supplier_form.contactEmail) }}
+                        {{ form_row(supplier_form.contactPhone) }}
+                        {{ form_row(supplier_form.notes) }}
+                        <div class="form__actions">
+                            <button type="submit" class="btn btn--secondary">Ajouter</button>
+                        </div>
+                    {{ form_end(supplier_form) }}
                 </details>
             </article>
         </section>

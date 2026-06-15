@@ -6,6 +6,5 @@
             <h1 class="page__title">Nouveau client</h1>
         </div>
     </div>
-
-    {{ include('client/_form.html.twig', {client: null, token_id: 'client_new', action: path('app_clients_new')}) }}
+    {{ include('client/_form.html.twig', {form: form, action: path('app_clients_new')}) }}
 {% endblock %}

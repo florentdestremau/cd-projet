@@ -7,6 +7,5 @@
             <h1 class="page__title">{{ client.displayName }}</h1>
         </div>
     </div>
-
-    {{ include('client/_form.html.twig', {client: client, token_id: 'client_edit_' ~ client.id, action: path('app_clients_edit', {id: client.id})}) }}
+    {{ include('client/_form.html.twig', {form: form, action: path('app_clients_edit', {id: client.id})}) }}
 {% endblock %}

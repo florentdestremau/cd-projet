@@ -8,41 +8,27 @@
         </div>
     </div>
 
-    <form method="post" class="card stack" data-controller="quote-builder">
-        <input type="hidden" name="_token" value="{{ csrf_token('quote_new_' ~ project.id) }}">
-
-        <div class="grid-3">
-            <div>
-                <label class="text-xs text-muted" style="display: block; letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: var(--space-2);">Valide jusqu'au</label>
-                <input type="date" name="validUntil" style="width: 100%; padding: var(--space-2) 0; border: none; border-bottom: 1px solid var(--color-line); background: transparent;">
-            </div>
-            <div>
-                <label class="text-xs text-muted" style="display: block; letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: var(--space-2);">TVA %</label>
-                <input type="number" step="0.01" name="vatRate" value="20.00" style="width: 100%; padding: var(--space-2) 0; border: none; border-bottom: 1px solid var(--color-line); background: transparent;">
-            </div>
+    {{ form_start(form, {attr: {class: 'card form'}}) }}
+        <div class="grid-2">
+            {{ form_row(form.validUntil) }}
+            {{ form_row(form.vatRate) }}
         </div>
-
         <h3 class="card__title">Lignes</h3>
-        <table style="width: 100%; border-collapse: collapse;" data-quote-builder-target="table">
-            <thead>
-                <tr><th style="text-align: left;">Description</th><th>Quantité</th><th>Prix unitaire HT</th><th></th></tr>
-            </thead>
-            <tbody data-quote-builder-target="rows">
-                {% for i in 0..2 %}
-                    <tr>
-                        <td><input name="descriptions[]" type="text" required style="width: 100%; padding: var(--space-2); border: 1px solid var(--color-line); border-radius: var(--radius-sm); background: var(--color-ivory);"></td>
-                        <td><input name="quantities[]" type="number" value="1" min="1" style="width: 80px; padding: var(--space-2); border: 1px solid var(--color-line); border-radius: var(--radius-sm); background: var(--color-ivory);"></td>
-                        <td><input name="prices[]" type="number" value="0" step="0.01" style="width: 120px; padding: var(--space-2); border: 1px solid var(--color-line); border-radius: var(--radius-sm); background: var(--color-ivory);"></td>
-                        <td></td>
-                    </tr>
+        <div data-controller="form-collection" data-form-collection-prototype-value="{{ form_widget(form.items.vars.prototype)|e('html_attr') }}">
+            <div data-form-collection-target="items" class="stack">
+                {% for item in form.items %}
+                    <div class="form__collection-row">
+                        {{ form_row(item.description) }}
+                        {{ form_row(item.quantity) }}
+                        {{ form_row(item.unitPriceHt) }}
+                    </div>
                 {% endfor %}
-            </tbody>
-        </table>
-        <button type="button" class="btn btn--ghost" data-action="quote-builder#addRow">+ Ligne</button>
-
-        <div style="display: flex; justify-content: flex-end; gap: var(--space-3);">
+            </div>
+            <button type="button" class="btn btn--ghost" data-action="form-collection#add">+ Ligne</button>
+        </div>
+        <div class="form__actions">
             <a href="{{ path('app_projects_show', {reference: project.reference}) }}" class="btn btn--ghost">Annuler</a>
             <button type="submit" class="btn btn--primary">Créer le devis</button>
         </div>
-    </form>
+    {{ form_end(form) }}
 {% endblock %}

@@ -15,7 +15,7 @@
     <form method="get" class="card" style="margin-bottom: var(--space-6); display: grid; grid-template-columns: 2fr 1fr 1fr auto; gap: var(--space-3); align-items: end;">
         <div>
             <label class="text-xs text-muted" style="display: block; letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: var(--space-1);">Recherche</label>
-            <input type="search" name="q" value="{{ search }}" placeholder="Titre, référence, client…"
+            <input type="search" name="q" value="{{ filters.q }}" placeholder="Titre, référence, client…"
                    style="width: 100%; padding: var(--space-2) 0; border: none; border-bottom: 1px solid var(--color-line); background: transparent;">
         </div>
         <div>
@@ -23,7 +23,7 @@
             <select name="status" style="width: 100%; padding: var(--space-2) 0; border: none; border-bottom: 1px solid var(--color-line); background: transparent;">
                 <option value="">Tous (sauf annulés)</option>
                 {% for s in statuses %}
-                    <option value="{{ s.value }}" {{ s.value == status_filter ? 'selected' }}>{{ s.label }}</option>
+                    <option value="{{ s.value }}" {{ filters.status and s.value == filters.status.value ? 'selected' }}>{{ s.label }}</option>
                 {% endfor %}
             </select>
         </div>
@@ -32,7 +32,7 @@
             <select name="stage" style="width: 100%; padding: var(--space-2) 0; border: none; border-bottom: 1px solid var(--color-line); background: transparent;">
                 <option value="">Toutes</option>
                 {% for s in stages %}
-                    <option value="{{ s.value }}" {{ s.value == stage_filter ? 'selected' }}>{{ s.label }}</option>
+                    <option value="{{ s.value }}" {{ filters.stage and s.value == filters.stage.value ? 'selected' }}>{{ s.label }}</option>
                 {% endfor %}
             </select>
         </div>
