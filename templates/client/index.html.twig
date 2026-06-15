@@ -1,0 +1,47 @@
+{% extends 'base.html.twig' %}
+{% block title %}Clients{% endblock %}
+{% block body %}
+    <div class="page__header">
+        <div>
+            <h1 class="page__title">Clients</h1>
+            <p class="page__subtitle">{{ clients|length }} client{{ clients|length > 1 ? 's' }}.</p>
+        </div>
+        <div class="page__actions">
+            <a href="{{ path('app_clients_new') }}" class="btn btn--primary">{{ ux_icon('lucide:plus') }} Nouveau client</a>
+        </div>
+    </div>
+
+    <form method="get" class="card" style="margin-bottom: var(--space-6); display: flex; gap: var(--space-3); align-items: end;">
+        <div style="flex: 1;">
+            <label class="text-xs text-muted" style="display: block; letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: var(--space-1);">Recherche</label>
+            <input type="search" name="q" value="{{ search }}" placeholder="Nom, société, email…"
+                   style="width: 100%; padding: var(--space-2) 0; border: none; border-bottom: 1px solid var(--color-line); background: transparent;">
+        </div>
+        <button type="submit" class="btn btn--secondary">Filtrer</button>
+    </form>
+
+    <table style="width: 100%; border-collapse: collapse;">
+        <thead>
+            <tr style="border-bottom: 1px solid var(--color-line);">
+                <th style="text-align: left; padding: var(--space-3); font-family: var(--font-serif); font-style: italic; font-weight: 400; color: var(--color-ink-muted);">Nom</th>
+                <th style="text-align: left; padding: var(--space-3); font-family: var(--font-serif); font-style: italic; font-weight: 400; color: var(--color-ink-muted);">Société</th>
+                <th style="text-align: left; padding: var(--space-3); font-family: var(--font-serif); font-style: italic; font-weight: 400; color: var(--color-ink-muted);">Email</th>
+                <th style="text-align: left; padding: var(--space-3); font-family: var(--font-serif); font-style: italic; font-weight: 400; color: var(--color-ink-muted);">Téléphone</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for client in clients %}
+                <tr style="border-bottom: 1px solid var(--color-line); background-color: {{ loop.index is odd ? 'transparent' : 'var(--color-paper)' }};">
+                    <td style="padding: var(--space-3);">
+                        <a href="{{ path('app_clients_show', {id: client.id}) }}">{{ client.displayName }}</a>
+                    </td>
+                    <td style="padding: var(--space-3);" class="text-soft">{{ client.companyName ?? '—' }}</td>
+                    <td style="padding: var(--space-3);" class="text-soft text-sm">{{ client.contactEmail ?? '—' }}</td>
+                    <td style="padding: var(--space-3);" class="text-soft text-sm">{{ client.contactPhone ?? '—' }}</td>
+                </tr>
+            {% else %}
+                <tr><td colspan="4" style="padding: var(--space-6); text-align: center;" class="text-muted">Aucun client.</td></tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}
