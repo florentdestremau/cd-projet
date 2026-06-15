@@ -9,11 +9,13 @@ use App\Enum\ProjectStage;
 use App\Form\CommentForm;
 use App\Form\DocumentUploadForm;
 use App\Form\ExpenseForm;
+use App\Form\TaskForm;
 use App\Repository\CommentRepository;
 use App\Repository\DocumentRepository;
 use App\Repository\ExpenseRepository;
 use App\Repository\InvoiceRepository;
 use App\Repository\QuoteRepository;
+use App\Repository\TaskRepository;
 use App\Repository\UserRepository;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -33,6 +35,7 @@ final class ShowController extends AbstractController
         InvoiceRepository $invoiceRepository,
         ExpenseRepository $expenseRepository,
         DocumentRepository $documentRepository,
+        TaskRepository $taskRepository,
     ): Response {
         $usersHandles = array_map(
             static fn (\App\Entity\User $u): array => ['handle' => strtolower($u->getFirstName()), 'label' => $u->getFullName()],
@@ -45,6 +48,8 @@ final class ShowController extends AbstractController
             'comment_form' => $this->createForm(CommentForm::class)->createView(),
             'expense_form' => $this->createForm(ExpenseForm::class)->createView(),
             'document_upload_form' => $this->createForm(DocumentUploadForm::class)->createView(),
+            'tasks' => $taskRepository->findBy(['project' => $project], ['completedAt' => 'ASC', 'dueDate' => 'ASC', 'createdAt' => 'ASC']),
+            'task_form' => $this->createForm(TaskForm::class)->createView(),
             'stages' => ProjectStage::ordered(),
             'users_handles' => $usersHandles,
             'quotes' => $quoteRepository->findBy(['project' => $project], ['createdAt' => 'DESC']),

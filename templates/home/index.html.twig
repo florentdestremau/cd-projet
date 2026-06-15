@@ -36,12 +36,20 @@
             <h2>Mes tâches</h2>
             {% if tasks|length > 0 %}
                 <div class="card">
-                    <ul style="list-style: none; padding: 0; margin: 0;">
+                    <ul class="task-list">
                         {% for task in tasks %}
-                            <li style="display: flex; align-items: center; gap: var(--space-3); padding: var(--space-3) 0; border-bottom: 1px solid var(--color-line);">
-                                {{ ux_icon('lucide:square') }}
-                                <span style="flex: 1;">{{ task.title }}</span>
-                                <a href="{{ path('app_projects_show', {reference: task.project.reference}) }}" class="text-xs text-muted">{{ task.project.reference }}</a>
+                            <li class="task-list__item">
+                                <form method="post" action="{{ path('app_tasks_toggle', {id: task.id}) }}" class="task-list__toggle">
+                                    <input type="hidden" name="_token" value="{{ csrf_token('task_toggle_' ~ task.id) }}">
+                                    <button type="submit" class="task-list__check" title="Marquer comme {{ task.completed ? 'à faire' : 'terminée' }}">
+                                        {{ ux_icon(task.completed ? 'lucide:check-square' : 'lucide:square', {width: 18, height: 18}) }}
+                                    </button>
+                                </form>
+                                <span class="task-list__title {{ task.completed ? 'task-list__title--done' }}">{{ task.title }}</span>
+                                <a href="{{ path('app_projects_show', {reference: task.project.reference}) }}" class="task-list__context">
+                                    <span class="text-xs text-muted" style="font-family: var(--font-mono);">{{ task.project.reference }}</span>
+                                    <span class="text-xs text-soft">{{ task.project.title|u.truncate(40, '…') }}</span>
+                                </a>
                                 {% if task.dueDate %}<span class="tag">{{ task.dueDate|format_date('short', locale: 'fr') }}</span>{% endif %}
                             </li>
                         {% endfor %}
