@@ -28,7 +28,7 @@ final class SubscribeController extends AbstractController
         $endpoint = $payload['endpoint'] ?? '';
         $p256dh = $payload['keys']['p256dh'] ?? '';
         $auth = $payload['keys']['auth'] ?? '';
-        if (in_array('', [$endpoint, $p256dh, $auth], true)) {
+        if (\in_array('', [$endpoint, $p256dh, $auth], true)) {
             return new JsonResponse(['error' => 'missing_fields'], 400);
         }
 

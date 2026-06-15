@@ -24,13 +24,13 @@ final class IndexController extends AbstractController
             ->leftJoin('p.client', 'c')->addSelect('c')
             ->orderBy('p.updatedAt', 'DESC');
 
-        if ($filters->status instanceof \App\Enum\ProjectStatus) {
+        if ($filters->status instanceof ProjectStatus) {
             $qb->andWhere('p.status = :status')->setParameter('status', $filters->status);
         } else {
             $qb->andWhere('p.status = :defaultStatus')->setParameter('defaultStatus', ProjectStatus::ACTIVE);
         }
 
-        if ($filters->stage instanceof \App\Enum\ProjectStage) {
+        if ($filters->stage instanceof ProjectStage) {
             $qb->andWhere('p.currentStage = :stage')->setParameter('stage', $filters->stage);
         }
 
