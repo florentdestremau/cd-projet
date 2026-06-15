@@ -11,7 +11,7 @@
 </head>
 <body>
     <main style="min-height: 100vh; display: grid; place-items: center; padding: var(--space-5);">
-        <div class="card" style="max-width: 420px; width: 100%; padding: var(--space-7);">
+        <div class="card" style="max-width: 520px; width: 100%; padding: var(--space-7);">
             <h1 style="font-size: var(--text-3xl); margin-bottom: var(--space-2);">Maison</h1>
             <p class="text-muted text-sm" style="margin-bottom: var(--space-6); letter-spacing: 0.16em; text-transform: uppercase;">Atelier — Connexion</p>
 
@@ -21,18 +21,21 @@
                 </p>
             {% endif %}
 
-            <form method="post" class="stack">
+            <div data-controller="demo-login" data-demo-login-password-value="demo">
+            <form method="post" class="stack" data-demo-login-target="form">
                 <input type="hidden" name="_csrf_token" data-controller="csrf-protection" value="{{ csrf_token('authenticate') }}">
 
                 <div>
                     <label for="email" class="text-xs text-muted" style="display: block; letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: var(--space-2);">Adresse e-mail</label>
                     <input type="email" id="email" name="_username" value="{{ last_username }}" required autofocus
+                           data-demo-login-target="email"
                            style="width: 100%; padding: var(--space-3) 0; border: none; border-bottom: 1px solid var(--color-line); background: transparent; font-size: var(--text-base);">
                 </div>
 
                 <div>
                     <label for="password" class="text-xs text-muted" style="display: block; letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: var(--space-2);">Mot de passe</label>
                     <input type="password" id="password" name="_password" required
+                           data-demo-login-target="password"
                            style="width: 100%; padding: var(--space-3) 0; border: none; border-bottom: 1px solid var(--color-line); background: transparent; font-size: var(--text-base);">
                 </div>
 
@@ -45,6 +48,31 @@
                     Se connecter
                 </button>
             </form>
+
+            <section class="demo-users" aria-label="Comptes de démo">
+                <header class="demo-users__header">
+                    <h2 class="demo-users__title">Entrer en démo</h2>
+                </header>
+                <ul class="demo-users__list">
+                    {% for user in demo_users %}
+                        {% set initials = user.name|split(' ')|map(part => part|slice(0, 1)|upper)|join %}
+                        <li>
+                            <button type="button"
+                                    data-action="demo-login#fillAndSubmit"
+                                    data-email="{{ user.email }}"
+                                    class="demo-users__btn"
+                                    title="{{ user.email }}">
+                                <span class="demo-users__initials">{{ initials|slice(0, 2) }}</span>
+                                <span class="demo-users__info">
+                                    <span class="demo-users__name">{{ user.name }}</span>
+                                    <span class="demo-users__role">{{ user.role }}</span>
+                                </span>
+                            </button>
+                        </li>
+                    {% endfor %}
+                </ul>
+            </section>
+            </div>
         </div>
     </main>
 </body>

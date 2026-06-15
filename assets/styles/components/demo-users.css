@@ -1,0 +1,93 @@
+.demo-users {
+    margin-top: var(--space-7);
+    padding-top: var(--space-5);
+    border-top: 1px solid var(--color-line);
+}
+
+.demo-users__header {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    margin-bottom: var(--space-4);
+}
+
+.demo-users__title {
+    font-family: var(--font-serif);
+    font-style: italic;
+    font-size: var(--text-sm);
+    font-weight: 500;
+    color: var(--color-ink-muted);
+    margin: 0;
+}
+
+.demo-users__list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--space-2);
+}
+
+.demo-users__btn {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    width: 100%;
+    padding: var(--space-2) var(--space-3);
+    background-color: transparent;
+    border: 1px solid var(--color-line);
+    border-radius: var(--radius-sm);
+    text-align: left;
+    cursor: pointer;
+    transition: background-color var(--transition-base), border-color var(--transition-base), transform var(--transition-base);
+    font-family: var(--font-sans);
+}
+
+.demo-users__btn:hover {
+    background-color: var(--color-paper);
+    border-color: var(--color-gold-deep);
+    transform: translateY(-1px);
+}
+
+.demo-users__initials {
+    display: grid;
+    place-items: center;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background-color: var(--color-ink);
+    color: var(--color-ivory);
+    font-family: var(--font-serif);
+    font-weight: 600;
+    font-size: var(--text-xs);
+    letter-spacing: 0.04em;
+    flex-shrink: 0;
+}
+
+.demo-users__btn:hover .demo-users__initials {
+    background-color: var(--color-gold-deep);
+}
+
+.demo-users__info {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+}
+
+.demo-users__name {
+    font-size: var(--text-sm);
+    font-weight: 500;
+    color: var(--color-ink);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.demo-users__role {
+    font-size: 10px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--color-ink-muted);
+    font-weight: 500;
+}
