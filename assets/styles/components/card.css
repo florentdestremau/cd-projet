@@ -25,3 +25,7 @@
     background-color: var(--color-line);
     margin: var(--space-4) calc(var(--space-5) * -1);
 }
+
+@media (max-width: 640px) {
+    .card { padding: var(--space-4); }
+}

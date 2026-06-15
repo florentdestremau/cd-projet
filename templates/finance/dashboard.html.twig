@@ -33,7 +33,7 @@
     <h2>Factures en retard</h2>
     <article class="card" style="margin-top: var(--space-4);">
         {% if overdue|length > 0 %}
-            <table style="width: 100%; border-collapse: collapse;">
+            <div class="table-scroll"><table style="width: 100%; border-collapse: collapse;">
                 <thead><tr style="border-bottom: 1px solid var(--color-line);">
                     <th style="text-align: left; padding: var(--space-2);">Référence</th>
                     <th style="text-align: left; padding: var(--space-2);">Projet</th>
@@ -52,7 +52,7 @@
                     </tr>
                 {% endfor %}
                 </tbody>
-            </table>
+            </table></div>
         {% else %}
             <p class="text-muted">Aucune facture en retard. ✦</p>
         {% endif %}

@@ -108,3 +108,19 @@
     font-size: var(--text-xs);
     margin-top: 4px;
 }
+
+/* Filter bar : 4 cols desktop, stack mobile */
+.filter-bar {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr auto;
+    gap: var(--space-3);
+    align-items: end;
+}
+
+.filter-bar > div { display: flex; flex-direction: column; gap: var(--space-1); }
+
+@media (max-width: 768px) {
+    .filter-bar {
+        grid-template-columns: 1fr;
+    }
+}

@@ -22,9 +22,12 @@
             <script src="https://cdn.jsdelivr.net/npm/frankenphp-hot-reload/+esm" type="module"></script>
         {% endif %}
     </head>
-    <body>
+    <body data-controller="mobile-menu">
         <div class="app">
-            <aside class="sidebar">
+            <aside class="sidebar" data-mobile-menu-target="sidebar">
+                <button type="button" class="sidebar__close" data-action="mobile-menu#close" aria-label="Fermer le menu">
+                    {{ ux_icon('lucide:x') }}
+                </button>
                 <div class="sidebar__brand">
                     Maison
                     <small>Atelier</small>
@@ -61,13 +64,17 @@
                     {% endif %}
                 </nav>
             </aside>
+            <div class="sidebar__backdrop" data-mobile-menu-target="backdrop" data-action="click->mobile-menu#close"></div>
 
             <div class="main">
                 <header class="topbar">
+                    <button type="button" class="topbar__menu" data-action="mobile-menu#open" aria-label="Ouvrir le menu">
+                        {{ ux_icon('lucide:menu') }}
+                    </button>
                     <div class="topbar__search text-muted text-sm">Recherche (cmd+K) — bientôt</div>
                     <div class="topbar__user">
                         {% if app.user %}
-                            <span>Bonjour, {{ app.user.firstName }}</span>
+                            <span class="topbar__user-name">Bonjour, {{ app.user.firstName }}</span>
                             {{ ux_icon('lucide:circle-user-round', {width: 28, height: 28}) }}
                             <a href="{{ path('app_logout') }}" class="btn btn--ghost" title="Se déconnecter">
                                 {{ ux_icon('lucide:log-out') }}

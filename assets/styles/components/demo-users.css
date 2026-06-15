@@ -91,3 +91,9 @@
     color: var(--color-ink-muted);
     font-weight: 500;
 }
+
+@media (max-width: 480px) {
+    .demo-users__list {
+        grid-template-columns: 1fr;
+    }
+}
