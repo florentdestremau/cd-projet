@@ -33,3 +33,4 @@ test-results/
 # Test SQLite databases (per worker)
 /var/data_test*.db
 
+/.idea/
