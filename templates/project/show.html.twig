@@ -1,6 +1,11 @@
 {% extends 'base.html.twig' %}
 {% block title %}{{ project.reference }} — {{ project.title }}{% endblock %}
 
+{% block stylesheets %}
+    {{ turbo_refresh_method('morph') }}
+    {{ turbo_refresh_scroll('preserve') }}
+{% endblock %}
+
 {% block body %}
     <div class="page__header">
         <div>
@@ -43,6 +48,7 @@
         <section class="stack">
             <h2>Fil de discussion</h2>
             {{ turbo_stream_from(['project/' ~ project.id]) }}
+            <turbo-frame id="comment-thread" target="_top">
             <div id="project-comments" class="stack">
                 {% for comment in comments %}
                     {{ include('project/_comment.html.twig', {comment: comment}) }}
@@ -51,7 +57,7 @@
                 {% endfor %}
             </div>
 
-            {{ form_start(comment_form, {action: path('app_comments_create', {reference: project.reference}), attr: {class: 'card form', 'data-controller': 'mention-autocomplete', 'data-mention-autocomplete-users-value': users_handles|json_encode}}) }}
+            {{ form_start(comment_form, {action: path('app_comments_create', {reference: project.reference}), attr: {class: 'card form', 'data-controller': 'mention-autocomplete', 'data-mention-autocomplete-users-value': users_handles|json_encode, 'data-turbo-frame': 'comment-thread'}}) }}
                 {{ form_label(comment_form.body) }}
                 {{ form_widget(comment_form.body, {attr: {'data-mention-autocomplete-target': 'input'}}) }}
                 <div data-mention-autocomplete-target="suggestions" class="mention-suggestions" hidden></div>
@@ -60,6 +66,7 @@
                     <button type="submit" class="btn btn--primary">Envoyer</button>
                 </div>
             {{ form_end(comment_form) }}
+            </turbo-frame>
         </section>
 
         <aside class="stack">
