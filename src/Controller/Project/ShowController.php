@@ -7,6 +7,7 @@ use App\Enum\DocumentCategory;
 use App\Enum\ExpenseCategory;
 use App\Enum\ProjectStage;
 use App\Form\CommentForm;
+use App\Form\DocumentUploadForm;
 use App\Form\ExpenseForm;
 use App\Repository\CommentRepository;
 use App\Repository\DocumentRepository;
@@ -43,6 +44,7 @@ final class ShowController extends AbstractController
             'comments' => $commentRepository->findForProject($project),
             'comment_form' => $this->createForm(CommentForm::class)->createView(),
             'expense_form' => $this->createForm(ExpenseForm::class)->createView(),
+            'document_upload_form' => $this->createForm(DocumentUploadForm::class)->createView(),
             'stages' => ProjectStage::ordered(),
             'users_handles' => $usersHandles,
             'quotes' => $quoteRepository->findBy(['project' => $project], ['createdAt' => 'DESC']),

@@ -15,7 +15,7 @@ final class CreateControllerTest extends WebTestCase
         $project = self::getContainer()->get(ProjectRepository::class)->findActiveOrdered(1)[0];
         $crawler = $client->request('GET', '/projets/'.$project->getReference());
 
-        $form = $crawler->filter('form[action*="/depenses"]')->form();
+        $form = $crawler->filter('form[action$="/depenses"]')->form();
         $form['expense_form[description]'] = 'Test expense e2e';
         $form['expense_form[amountHt]'] = '50.00';
         $form['expense_form[category]'] = 'material';

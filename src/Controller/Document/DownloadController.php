@@ -16,13 +16,13 @@ final readonly class DownloadController
 {
     public function __construct(
         #[Autowire('%env(default::APP_UPLOAD_DIR)%')]
-        private string $uploadDir,
+        private ?string $uploadDir,
     ) {
     }
 
     public function __invoke(#[MapEntity] Document $doc): BinaryFileResponse
     {
-        $base = '' !== $this->uploadDir ? $this->uploadDir : \dirname(__DIR__, 3).'/var/uploads';
+        $base = null !== $this->uploadDir && '' !== $this->uploadDir ? $this->uploadDir : \dirname(__DIR__, 3).'/var/uploads';
         $path = $base.'/'.$doc->getStoragePath();
         if (!file_exists($path)) {
             throw new \Symfony\Component\HttpKernel\Exception\NotFoundHttpException('Fichier manquant.');

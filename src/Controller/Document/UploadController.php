@@ -21,7 +21,7 @@ final class UploadController extends AbstractController
 {
     public function __construct(
         #[Autowire('%env(default::APP_UPLOAD_DIR)%')]
-        private readonly string $uploadDir,
+        private readonly ?string $uploadDir,
     ) {
     }
 
@@ -40,7 +40,7 @@ final class UploadController extends AbstractController
             return $this->redirectToRoute('app_projects_show', ['reference' => $project->getReference()]);
         }
 
-        $storageDir = ('' !== $this->uploadDir ? $this->uploadDir : \dirname(__DIR__, 3).'/var/uploads').'/'.$project->getId();
+        $storageDir = (null !== $this->uploadDir && '' !== $this->uploadDir ? $this->uploadDir : \dirname(__DIR__, 3).'/var/uploads').'/'.$project->getId();
         if (!is_dir($storageDir) && !mkdir($storageDir, 0o775, true) && !is_dir($storageDir)) {
             throw new \RuntimeException('Cannot create upload directory.');
         }

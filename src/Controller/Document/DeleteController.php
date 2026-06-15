@@ -17,7 +17,7 @@ final class DeleteController extends AbstractController
 {
     public function __construct(
         #[Autowire('%env(default::APP_UPLOAD_DIR)%')]
-        private readonly string $uploadDir,
+        private readonly ?string $uploadDir,
     ) {
     }
 
@@ -30,7 +30,7 @@ final class DeleteController extends AbstractController
             throw $this->createAccessDeniedException();
         }
         $projectRef = $doc->getProject()?->getReference();
-        $base = '' !== $this->uploadDir ? $this->uploadDir : \dirname(__DIR__, 3).'/var/uploads';
+        $base = null !== $this->uploadDir && '' !== $this->uploadDir ? $this->uploadDir : \dirname(__DIR__, 3).'/var/uploads';
         $path = $base.'/'.$doc->getStoragePath();
         if (file_exists($path)) {
             @unlink($path);
